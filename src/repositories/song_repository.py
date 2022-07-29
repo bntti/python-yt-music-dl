@@ -50,11 +50,11 @@ class SongRepository:
         cursor.execute(sql, [song.url])
         return bool(cursor.fetchone())
 
-    def filename_exists(self, filename: str) -> bool:
-        """Check if some song uses the filename"""
-        sql = "SELECT 1 FROM songs WHERE filename = ?"
+    def filename_exists(self, filename: str, song: Song) -> bool:
+        """Check if some other song uses the filename"""
+        sql = "SELECT 1 FROM songs WHERE filename = ? and url != ?"
         cursor = self._connection.cursor()
-        cursor.execute(sql, [filename])
+        cursor.execute(sql, [filename, song.url])
         return bool(cursor.fetchone())
 
     def add_song(self, song: Song) -> None:
