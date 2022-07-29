@@ -33,11 +33,15 @@ class YoutubeApiService:
                     song["duration"],
                 )
             )
-        thumbnail_id = 3 if len(playlist["thumbnails"]) == 4 else 1
+
+        is_album = len(playlist["thumbnails"]) == 3
+        thumbnail_id = 1 if is_album else 3
+
         return Playlist(
             playlist["webpage_url"],
             playlist["title"],
             playlist["thumbnails"][thumbnail_id]["url"],
+            is_album,
             songs,
         )
 

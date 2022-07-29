@@ -12,12 +12,14 @@ class SongService:
         print(f"{INFO}Downloading song{CLEAR}")
         path = youtube_api_service.download_song(song)
 
-        print(f"{INFO}Normalizing and converting song to the correct format{CLEAR}")
+        print(
+            f"{INFO}Normalizing the song and converting it to the correct format{CLEAR}"
+        )
         filename = file_repository.normalize_and_convert_song_to_the_correct_format(
             path
         )
 
-        print(f"{INFO}Updating database{CLEAR}")
+        print(f"{INFO}Updating the song entry in the database{CLEAR}")
         song_repository.set_song_as_downloaded(song, filename)
 
         return filename

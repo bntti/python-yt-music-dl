@@ -89,9 +89,3 @@ class Song:
         if self.renamed:
             return f"{self.artist} - {self.title}"
         return f"{self.uploader}: {self.yt_title}"
-
-    def __repr__(self) -> str:
-        return (
-            f"Song({self.url}, {self.uploader}, {self.yt_title}, {self.image_url}, {self.length}, "
-            f"{self.downloaded}, {self.filename}, {self.renamed}, {self.artist}, {self.title})"
-        )

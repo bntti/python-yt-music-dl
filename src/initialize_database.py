@@ -23,7 +23,8 @@ def create_tables(connection: Connection):
         CREATE TABLE playlists (
             url       TEXT NOT NULL PRIMARY KEY,
             title     TEXT NOT NULL,
-            image_url TEXT NOT NULL
+            image_url TEXT NOT NULL,
+            is_album  BOOL NOT NULL
         );
         """
     )

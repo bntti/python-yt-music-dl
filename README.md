@@ -1,6 +1,7 @@
 # yt-music-dl
 
-Downloads songs from youtube, renames them and writes the song metadata
+Downloads songs from youtube, renames them and writes the song metadata  
+One song can only be in one playlist, with the exception of a song being in an album and a playlist, where the album is given priority.
 
 ## Running project
 ### Dependencies

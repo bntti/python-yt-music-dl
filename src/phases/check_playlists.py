@@ -1,7 +1,7 @@
 import sys
 from typing import List
 
-from colors import CLEAR, INFO, TITLE, WARN
+from colors import CLEAR, INFO, SUBTITLE, TITLE, WARN
 from config import CONFIG
 from entities import Playlist
 from repositories import playlist_repository
@@ -58,11 +58,13 @@ def check_playlists():
     if len(urls) == 0:
         sys.exit(f"{WARN}No playlists to download, exiting{CLEAR}")
 
-    print(f"{TITLE}Checking playlists{CLEAR}")
+    print(f"{TITLE}Checking the playlists{CLEAR}")
+    print(f"{SUBTITLE}Downloading the playlist data from YouTube{CLEAR}")
     remote_playlists = []
     for url in urls:
         remote_playlists.append(playlist_service.get_remote_playlist(url))
     local_playlists = playlist_repository.get_playlists()
 
+    print(f"{SUBTITLE}Checking the playlists{CLEAR}")
     check_for_removed_playlists(local_playlists, remote_playlists)
     check_songs(remote_playlists)

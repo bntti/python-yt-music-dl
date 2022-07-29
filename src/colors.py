@@ -5,4 +5,4 @@ WARN = "\33[93m"
 ERROR = "\33[91m"
 CLEAR = "\33[0m"
 
-ITALIC = f"\33[3;36m"
+ITALIC = "\33[3;36m"

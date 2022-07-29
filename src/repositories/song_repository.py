@@ -35,9 +35,19 @@ class SongRepository:
         rows = cursor.fetchall()
         return [self.row_to_song(row) for row in rows]
 
+    def album_count(self, song: Song) -> int:
+        """Return the number of albums that contain the song"""
+        sql = """SELECT COUNT(*) FROM playlists p, playlist_songs ps
+                 WHERE p.is_album = true AND ps.playlist_url = p.url AND ps.song_url = ?"""
+        cursor = self._connection.cursor()
+        cursor.execute(sql, [song.url])
+        row = cursor.fetchone()
+        return int(row[0])
+
     def playlist_count(self, song: Song) -> int:
         """Return the number of playlists that contain the song"""
-        sql = """SELECT COUNT(*) FROM playlist_songs WHERE song_url = ?"""
+        sql = """SELECT COUNT(*) FROM playlists p, playlist_songs ps
+                 WHERE p.is_album = false AND ps.playlist_url = p.url AND ps.song_url = ?"""
         cursor = self._connection.cursor()
         cursor.execute(sql, [song.url])
         row = cursor.fetchone()
