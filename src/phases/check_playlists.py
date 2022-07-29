@@ -54,7 +54,7 @@ def check_songs(remote_playlists: List[Playlist]) -> None:
 
 
 def check_playlists():
-    urls = CONFIG["songs"]
+    urls = CONFIG["playlist_urls"]
     if len(urls) == 0:
         sys.exit(f"{WARN}No playlists to download, exiting{CLEAR}")
 
