@@ -9,13 +9,11 @@ Tests are currently a bit outdated.
 - poetry
 
 ### Commands
-| Target                                     | Command                             |
-| ------------------------------------------ | ----------------------------------- |
-| Installing dependencies (excluding FFmpeg) | `poetry install`                    |
-| Running the program                        | `poetry run invoke start`           |
-| Running the tests                          | `poetry run invoke test`            |
-| Generating a code coverage report          | `poetry run invoke coverage-report` |
-| Running linting                            | `poetry run invoke lint`            |
+| Target                                     | Command                   |
+| ------------------------------------------ | ------------------------- |
+| Installing dependencies (excluding FFmpeg) | `poetry install`          |
+| Running the program                        | `poetry run invoke start` |
+| Running linting                            | `poetry run invoke lint`  |
 
 ### Configuration
 Configuration is done by editing the `.env`  

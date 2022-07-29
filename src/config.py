@@ -8,7 +8,8 @@ config_file_path = f"{file_dir}/../config.json"
 if not os.path.exists(config_file_path):
     sys.exit("Create config file to continue")  # TODO:
 
-CONFIG = json.load(open(config_file_path, "r"))
+with open(config_file_path, "r", encoding="utf-8") as f:
+    CONFIG = json.load(f)
 
 SONG_EXT = ".mp3"
 DATA_DIR = f"{file_dir}/../data"

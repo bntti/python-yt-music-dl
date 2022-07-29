@@ -1,8 +1,27 @@
 import sys
+from typing import List
 
 from config import CONFIG
+from entities import Playlist
 from repositories import playlist_repository
 from services import playlist_service
+
+
+def check_for_removed_playlists(
+    local_playlists: List[Playlist], remote_playlists: List[Playlist]
+):
+    # Check if playlists have been removed
+    to_be_removed = []
+    for local_playlist in local_playlists:
+        found = False
+        for remote_playlist in remote_playlists:
+            if local_playlist.url == remote_playlist.url:
+                found = True
+        if not found:
+            to_be_removed.append(local_playlist)
+    for playlist in to_be_removed:
+        local_playlists.remove(playlist)
+        playlist_repository.remove_playlist(playlist)
 
 
 def check_playlists():
@@ -13,19 +32,9 @@ def check_playlists():
     remote_playlists = []
     for url in urls:
         remote_playlists.append(playlist_service.get_remote_playlist(url))
-
-    # Check if playlists have been removed
     local_playlists = playlist_repository.get_playlists()
-    to_be_removed = []
-    for local_playlist in local_playlists:
-        found = False
-        for remote_playlist in remote_playlists:
-            if local_playlist.url == remote_playlist.url:
-                found = True
-        if not found:
-            to_be_removed.append(local_playlist)
-    for playlist in to_be_removed:
-        playlist_repository.remove_playlist(playlist)
+
+    check_for_removed_playlists(local_playlists, remote_playlists)
 
     # Check if remote playlists are different than the local ones
     for remote_playlist in remote_playlists:

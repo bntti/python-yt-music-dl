@@ -1,8 +1,8 @@
 import sqlite3
-from typing import List, Optional
+from typing import List
 
 from database_connection import get_database_connection
-from entities import Playlist, Song
+from entities import Song
 
 
 class SongRepository:
@@ -59,9 +59,11 @@ class SongRepository:
 
     def add_song(self, song: Song) -> None:
         """Add song to the database"""
+
+        cursor = self._connection.cursor()
+        sql = """INSERT INTO songs (url, uploader, yt_title, image_url, length)
+                 VALUES (?, ?, ?, ?, ?)"""
         try:
-            cursor = self._connection.cursor()
-            sql = "INSERT INTO songs (url, uploader, yt_title, image_url, length) VALUES (?, ?, ?, ?, ?)"
             cursor.execute(
                 sql,
                 [song.url, song.uploader, song.yt_title, song.image_url, song.length],

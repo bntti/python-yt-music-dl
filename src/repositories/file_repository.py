@@ -30,26 +30,40 @@ class FileRepository:
         new_path = self.get_song_path(song_copy)
         shutil.move(old_path, new_path)
 
+    def generate_square_image(self, image: Image) -> Image:
+        """Convert image to 1:1 by adding blur"""
+        original_w, original_h = image.size
+        factor = max(original_w, original_h) / min(original_w, original_h)
+        new_w = int(original_w * factor)
+        new_h = int(original_h * factor)
+        background = image.resize((new_w, new_h))
+        background = background.filter(ImageFilter.GaussianBlur(7))
+
+        target_bg_size = min(new_w, new_h)
+        x_offset = int((new_w - target_bg_size) / 2)
+        y_offset = int((new_h - target_bg_size) / 2)
+        background = background.crop(
+            (x_offset, y_offset, new_w - x_offset, new_h - y_offset)
+        )
+
+        x_offset = int((target_bg_size - original_w) / 2)
+        y_offset = int((target_bg_size - original_h) / 2)
+        background.paste(image, (x_offset, y_offset))
+        return background
+
     def get_song_cover_image(self, image_url: str) -> bytes:
         """Generate cover image from image url"""
         data = requests.get(image_url).content
-        img = Image.open(BytesIO(data))
-        w, h = img.size
+        image = Image.open(BytesIO(data))
+        original_w, original_h = image.size
 
-        if w == h:
-            bg = img
+        if original_w == original_h:
+            square_image = image
         else:
-            factor = w / h
-            bg = img.resize((int(w * factor), int(h * factor)))
-            bg = bg.filter(ImageFilter.GaussianBlur(7))
-
-            new_width = int(w * factor)
-            width_diff = new_width - w
-            bg = bg.crop((int(width_diff / 2), 0, new_width - int(width_diff / 2), w))
-            bg.paste(img, (0, int((w - h) / 2)))
+            square_image = self.generate_square_image(image)
 
         buf = BytesIO()
-        bg.save(buf, format="png")
+        square_image.save(buf, format="png")
         return buf.getvalue()
 
     def check_song_album(self, song: Song, playlist: Playlist):

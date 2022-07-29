@@ -22,8 +22,8 @@ def rename_songs():
             title = input_title if input_title else title
 
             print(f"Artist: {artist}\nTitle: {title}")
-            ok = input("OK? [Y/n]")
-            if "n" not in ok.lower():
+            rename_ok = input("OK? [Y/n]")
+            if "n" not in rename_ok.lower():
                 break
 
         song_renamer_service.rename_song(song, artist, title)

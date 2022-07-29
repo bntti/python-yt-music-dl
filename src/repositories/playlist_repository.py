@@ -1,4 +1,3 @@
-import sqlite3
 from typing import List, Optional
 
 from database_connection import get_database_connection
@@ -49,7 +48,9 @@ class PlaylistRepository:
         return [song_repository.row_to_song(row) for row in rows]
 
     def get_song_playlist(self, song: Song) -> Playlist:
-        sql = "SELECT p.url, p.title, p.image_url FROM playlists p, playlist_songs ps WHERE ps.playlist_url = p.url AND ps.song_url = ?"
+        sql = """SELECT p.url, p.title, p.image_url
+                 FROM playlists p, playlist_songs ps
+                 WHERE ps.playlist_url = p.url AND ps.song_url = ?"""
         cursor = self._connection.cursor()
         cursor.execute(sql, [song.url])
         row = cursor.fetchone()

@@ -12,7 +12,9 @@ class YoutubeApiService:
 
     @staticmethod
     def get_playlist(playlist_url: str) -> Optional[Playlist]:
-        """Downloads playlist data from YouTube and returns a Playlist object and None if the download failed"""
+        """Downloads playlist data from YouTube and
+        returns a Playlist object and None if the download failed
+        """
         try:
             ydl_opts = {"extract_flat": "in_playlist", "quiet": True}
             with YoutubeDL(ydl_opts) as ydl:
