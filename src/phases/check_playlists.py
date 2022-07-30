@@ -1,7 +1,7 @@
 import sys
 from typing import List
 
-from colors import CLEAR, INFO, SUBTITLE, TITLE, WARN
+from colors import CLEAR, INFO, ITALIC, SUBTITLE, TITLE, WARN
 from config import CONFIG
 from entities import Playlist
 from repositories import playlist_repository
@@ -43,7 +43,7 @@ def check_songs(remote_playlists: List[Playlist]) -> None:
         for song in local_playlist:
             if song not in remote_playlist:
                 print(
-                    f"{WARN}Song '{song}' has been removed from playlist '{local_playlist}'{CLEAR}"
+                    f"{WARN}Song {ITALIC}{song}{WARN} has been removed from playlist {ITALIC}{local_playlist}{CLEAR}"
                 )
                 playlist_repository.remove_song_from_playlist(local_playlist, song)
 

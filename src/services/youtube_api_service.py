@@ -1,8 +1,10 @@
+import sys
 from typing import Optional
 
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import DownloadError
 
+from colors import CLEAR, ERROR, ITALIC
 from config import SONG_DIR
 from entities import Playlist, Song
 
@@ -55,7 +57,13 @@ class YoutubeApiService:
             "quiet": True,
         }
         with YoutubeDL(ydl_opts) as ydl:
-            song_data = ydl.extract_info(song.url)
+            try:
+                song_data = ydl.extract_info(song.url)
+            except DownloadError:
+                sys.exit(
+                    f"{ERROR}Failed to download song {ITALIC}{song}{ERROR}, "
+                    f"you should remove it from it's playlist to download the songs{CLEAR}",
+                )
             return ydl.prepare_filename(song_data)
 
 

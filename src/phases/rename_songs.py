@@ -9,6 +9,12 @@ def rename_songs():
     for i, song in enumerate(songs):
         if song.renamed:
             continue
+
+        album_count = song_repository.album_count(song)
+        pl_count = song_repository.playlist_count(song)
+        if album_count == 0 and pl_count == 0:
+            continue
+
         print(f"{SUBTITLE}Renaming song {i+1}/{len(songs)}{CLEAR}")
         print(f"Uploader '{song.uploader}'\nTitle: '{song.yt_title}'")
 
