@@ -1,23 +1,12 @@
 import sys
-from typing import List
 
 from colors import CLEAR, ERROR, INFO, SUBTITLE, TITLE
-from entities import Song
 from repositories import file_repository, playlist_repository, song_repository
 from services import song_service
 
 
-def _download_songs(songs: List[Song], not_downloaded: List[Song]) -> None:
-    for i, (song, playlist) in enumerate(not_downloaded):
-        print(f"{SUBTITLE}Downloading song {i+1}/{len(songs)}{CLEAR}")
-        filename = song_service.download_song(song)
-        song.filename = filename
-
-        print(f"{INFO}Writing song metadata{CLEAR}")
-        file_repository.write_song_metadata(song, playlist)
-
-
 def download_songs():
+    """Download songs that have not been downloaded yet and write some metadata to them"""
     songs = song_repository.get_songs()
     print(f"{TITLE}Downloading songs{CLEAR}")
     not_downloaded = []
@@ -42,4 +31,10 @@ def download_songs():
     if len(songs, not_downloaded) == 0:
         print(f"{INFO}All songs have been downloaded{CLEAR}")
 
-    _download_songs(songs, not_downloaded)
+    for i, (song, playlist) in enumerate(not_downloaded):
+        print(f"{SUBTITLE}Downloading song {i+1}/{len(songs)}{CLEAR}")
+        filename = song_service.download_song(song)
+        song.filename = filename
+
+        print(f"{INFO}Writing song metadata{CLEAR}")
+        file_repository.write_song_metadata(song, playlist)

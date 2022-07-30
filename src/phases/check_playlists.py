@@ -11,7 +11,7 @@ from services import playlist_service
 def check_for_removed_playlists(
     local_playlists: List[Playlist], remote_playlists: List[Playlist]
 ):
-    # Check if playlists have been removed
+    """Check if any playlists have been removed"""
     to_be_removed = []
     for local_playlist in local_playlists:
         found = False
@@ -55,6 +55,7 @@ def check_songs(remote_playlists: List[Playlist]) -> None:
 
 
 def check_playlists():
+    """Check playlists for changes"""
     urls = CONFIG["playlist_urls"]
     if len(urls) == 0:
         sys.exit(f"{WARN}No playlists to download, exiting{CLEAR}")

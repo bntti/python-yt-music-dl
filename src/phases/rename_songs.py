@@ -7,6 +7,7 @@ from services import song_renamer_service
 
 
 def _rename_songs(songs: List[Song], not_renamed: List[Song]) -> None:
+    """Rename the songs in the not_renamed list using user input"""
     for i, song in enumerate(not_renamed):
         print(f"{SUBTITLE}Renaming song {i+1}/{len(songs)}{CLEAR}")
         print(f"Uploader '{song.uploader}'\nTitle: '{song.yt_title}'")
@@ -24,6 +25,7 @@ def _rename_songs(songs: List[Song], not_renamed: List[Song]) -> None:
 
 
 def rename_songs():
+    """Rename songs that have not been downloaded yet using user input"""
     songs = song_repository.get_songs()
     print(f"{TITLE}Renaming songs{CLEAR}")
 

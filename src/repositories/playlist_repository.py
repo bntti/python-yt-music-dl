@@ -52,6 +52,7 @@ class PlaylistRepository:
         return [song_repository.row_to_song(row) for row in rows]
 
     def get_song_album(self, song: Song) -> Playlist:
+        """Get the album that the song is in"""
         sql = """SELECT p.url, p.title, p.image_url, p.is_album
                  FROM playlists p, playlist_songs ps
                  WHERE p.is_album = true AND ps.playlist_url = p.url AND ps.song_url = ?"""
@@ -67,6 +68,7 @@ class PlaylistRepository:
         )
 
     def get_song_playlist(self, song: Song) -> Playlist:
+        """Get the playlist that the song is in"""
         sql = """SELECT p.url, p.title, p.image_url, p.is_album
                  FROM playlists p, playlist_songs ps
                  WHERE p.is_album = false AND ps.playlist_url = p.url AND ps.song_url = ?"""

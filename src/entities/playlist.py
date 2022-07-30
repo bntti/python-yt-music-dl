@@ -14,7 +14,7 @@ class Playlist:
         songs (List[Song]): Songs that the playlist contains
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=[R0913]
         self, url: str, title: str, image_url: str, is_album: bool, songs: List[Song]
     ) -> None:
         """Playlist object constructor

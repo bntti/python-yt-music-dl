@@ -8,6 +8,7 @@ from services import song_renamer_service
 
 
 def import_data():
+    """Import song renaming data from ../../export.json and rename songs according to it"""
     print(f"{TITLE}Importing song renaming data{CLEAR}")
     file_dir = os.path.dirname(__file__)
     file_path = f"{file_dir}/../../export.json"

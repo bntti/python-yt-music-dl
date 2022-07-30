@@ -3,6 +3,7 @@ from repositories import file_repository, song_repository
 
 
 def remove_orphans():
+    """Remove songs that are not in any playlist"""
     songs = song_repository.get_songs()
     print(f"{TITLE}Removing orphans{CLEAR}")
     for song in songs:

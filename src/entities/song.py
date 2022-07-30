@@ -1,7 +1,7 @@
 from typing import Optional
 
 
-class Song:
+class Song:  # pylint: disable=[R0902]
     """Song object, matches a song on Youtube.
 
     Attributes:
@@ -16,7 +16,7 @@ class Song:
         artist (str): Song artist.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=[R0913]
         self,
         url: str,
         uploader: str,

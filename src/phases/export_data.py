@@ -6,6 +6,7 @@ from repositories import song_repository
 
 
 def export_data():
+    """Export song renaming data to ../../export.json"""
     print(f"{TITLE}Exporting renaming data{CLEAR}")
     data = song_repository.export()
     file_dir = os.path.dirname(__file__)
