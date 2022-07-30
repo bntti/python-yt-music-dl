@@ -9,7 +9,7 @@ from services import song_renamer_service
 def _rename_songs(songs: List[Song], not_renamed: List[Song]) -> None:
     """Rename the songs in the not_renamed list using user input"""
     for i, song in enumerate(not_renamed):
-        print(f"{SUBTITLE}Renaming song {i+1}/{len(songs)}{CLEAR}")
+        print(f"{SUBTITLE}Renaming song {i+1}/{len(not_renamed)}{CLEAR}")
         print(f"Uploader '{song.uploader}'\nTitle: '{song.yt_title}'")
 
         artist = song.uploader

@@ -32,7 +32,7 @@ def download_songs():
         print(f"{INFO}All songs have been downloaded{CLEAR}")
 
     for i, (song, playlist) in enumerate(not_downloaded):
-        print(f"{SUBTITLE}Downloading song {i+1}/{len(songs)}{CLEAR}")
+        print(f"{SUBTITLE}Downloading song {i+1}/{len(not_downloaded)}{CLEAR}")
         filename = song_service.download_song(song)
         song.filename = filename
 
