@@ -28,7 +28,7 @@ def download_songs():
         if not song.downloaded:
             not_downloaded.append((song, playlist))
 
-    if len(songs, not_downloaded) == 0:
+    if len(not_downloaded) == 0:
         print(f"{INFO}All songs have been downloaded{CLEAR}")
 
     for i, (song, playlist) in enumerate(not_downloaded):
