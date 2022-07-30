@@ -10,7 +10,9 @@ def _rename_songs(songs: List[Song], not_renamed: List[Song]) -> None:
     """Rename the songs in the not_renamed list using user input"""
     for i, song in enumerate(not_renamed):
         print(f"{SUBTITLE}Renaming song {i+1}/{len(not_renamed)}{CLEAR}")
-        print(f"Uploader '{song.uploader}'\nTitle: '{song.yt_title}'")
+        print(
+            f"Uploader {ITALIC}{song.uploader}{CLEAR}\nTitle: {ITALIC}{song.yt_title}{CLEAR}"
+        )
 
         artist = song.uploader
         title = song.yt_title

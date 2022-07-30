@@ -10,7 +10,7 @@ def remove_orphans():
         if not song_repository.song_has_playlist(song):
             print(
                 f"{WARN}Removing song {ITALIC}{song}{WARN}",
-                f"file because it isn't in any playlist{CLEAR}",
+                f" because it isn't in any playlist{CLEAR}",
             )
             song_repository.remove_song(song)
             if song.downloaded:
