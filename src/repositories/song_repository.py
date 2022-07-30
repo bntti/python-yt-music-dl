@@ -85,20 +85,24 @@ class SongRepository:
         cursor.execute(sql, [filename, song.url])
         return bool(cursor.fetchone())
 
+    def song_exists(self, song: Song) -> bool:
+        """Check if song is in the database"""
+        sql = "SELECT 1 FROM songs WHERE url = ?"
+        cursor = self._connection.cursor()
+        cursor.execute(sql, [song.url])
+        return bool(cursor.fetchone())
+
     def add_song(self, song: Song) -> None:
         """Add song to the database"""
-
-        cursor = self._connection.cursor()
-        sql = """INSERT INTO songs (url, uploader, yt_title, image_url, length)
-                 VALUES (?, ?, ?, ?, ?)"""
-        try:
+        if not self.song_exists(song):
+            cursor = self._connection.cursor()
+            sql = """INSERT INTO songs (url, uploader, yt_title, image_url, length)
+                    VALUES (?, ?, ?, ?, ?)"""
             cursor.execute(
                 sql,
                 [song.url, song.uploader, song.yt_title, song.image_url, song.length],
             )
             self._connection.commit()
-        except sqlite3.IntegrityError:
-            pass
 
     def set_song_as_downloaded(self, song: Song, filename: str) -> None:
         """Set song as downloaded and save the song filename to the database"""
