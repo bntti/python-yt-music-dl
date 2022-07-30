@@ -14,8 +14,8 @@ def import_data():
     if not os.path.exists(file_path):
         sys.exit(f"{ERROR}File {ITALIC}{file_path}{ERROR} does not exist")
 
-    with open(file_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    with open(file_path, "r", encoding="utf-8") as data_file:
+        data = json.load(data_file)
 
     print(f"{TITLE}Renaming songs{CLEAR}")
     for i, song_data in enumerate(data):

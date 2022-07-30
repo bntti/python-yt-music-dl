@@ -11,7 +11,7 @@ if not os.path.exists(config_file_path):
     with open(config_file_path, "w", encoding="utf-8") as f:
         f.write('{"DBFS": -20, "playlist_urls": []}')
     sys.exit(
-        f"{TITLE}The configuration file was created, ",
+        f"{TITLE}The configuration file was created, "
         f"add the playlists there and rerun the program{CLEAR}",
     )
 

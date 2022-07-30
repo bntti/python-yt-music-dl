@@ -10,6 +10,6 @@ def export_data():
     data = song_repository.export()
     file_dir = os.path.dirname(__file__)
     file_path = f"{file_dir}/../../export.json"
-    with open(file_path, "w", encoding="utf-8") as f:
-        json.dump(data, f)
+    with open(file_path, "w", encoding="utf-8") as export_file:
+        json.dump(data, export_file)
     print(f"{INFO}Exported data was written to {ITALIC}{file_path}{CLEAR}")

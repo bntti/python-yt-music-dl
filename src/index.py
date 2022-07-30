@@ -36,7 +36,7 @@ def main() -> None:
             export_data()
         elif command == "i":
             import_data()
-        elif command == "q" or command == "":
+        elif command in ("q", ""):
             break
         else:
             print(f"{WARN}Invalid command {ITALIC}{command}{CLEAR}")

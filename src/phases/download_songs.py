@@ -1,8 +1,20 @@
 import sys
+from typing import List
 
 from colors import CLEAR, ERROR, INFO, SUBTITLE, TITLE
+from entities import Song
 from repositories import file_repository, playlist_repository, song_repository
 from services import song_service
+
+
+def _download_songs(songs: List[Song], not_downloaded: List[Song]) -> None:
+    for i, (song, playlist) in enumerate(not_downloaded):
+        print(f"{SUBTITLE}Downloading song {i+1}/{len(songs)}{CLEAR}")
+        filename = song_service.download_song(song)
+        song.filename = filename
+
+        print(f"{INFO}Writing song metadata{CLEAR}")
+        file_repository.write_song_metadata(song, playlist)
 
 
 def download_songs():
@@ -10,7 +22,6 @@ def download_songs():
     print(f"{TITLE}Downloading songs{CLEAR}")
     not_downloaded = []
     for song in songs:
-
         album_count = song_repository.album_count(song)
         pl_count = song_repository.playlist_count(song)
         if album_count == 0 and pl_count == 0:
@@ -28,13 +39,7 @@ def download_songs():
         if not song.downloaded:
             not_downloaded.append((song, playlist))
 
-    if len(not_downloaded) == 0:
+    if len(songs, not_downloaded) == 0:
         print(f"{INFO}All songs have been downloaded{CLEAR}")
 
-    for i, (song, playlist) in enumerate(not_downloaded):
-        print(f"{SUBTITLE}Downloading song {i+1}/{len(songs)}{CLEAR}")
-        filename = song_service.download_song(song)
-        song.filename = filename
-
-        print(f"{INFO}Writing song metadata{CLEAR}")
-        file_repository.write_song_metadata(song, playlist)
+    _download_songs(songs, not_downloaded)
