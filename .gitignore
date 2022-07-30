@@ -1,4 +1,5 @@
 config.json
+export.json
 
 .vscode
 __pycache__

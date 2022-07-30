@@ -66,29 +66,35 @@ class FileRepository:
         square_image.save(buf, format="png")
         return buf.getvalue()
 
-    def check_song_album(self, song: Song, playlist: Playlist):
-        """Check song album and set it if necessary"""
+    def write_song_metadata(self, song: Song, playlist: Playlist):
+        """Write the song metadata"""
         mp3_file = MP3(self.get_song_path(song), ID3=EasyID3)
-        if "album" not in mp3_file or mp3_file["album"] != [playlist.title]:
-            mp3_file["album"] = [playlist.title]
-            mp3_file.save()
+        mp3_file["album"] = [playlist.title]
 
-            mp3_file = MP3(self.get_song_path(song))
-            mp3_file.tags.add(
-                APIC(
-                    encoding=3,
-                    mime="image/png",
-                    type=3,
-                    desc="Cover",
-                    data=self.get_song_cover_image(playlist.image_url),
-                )
+        artist = song.uploader
+        title = song.yt_title
+        if " - " in song.yt_title:
+            artist, title = song.yt_title.split(" - ")[0:2]
+        mp3_file["artist"] = [artist]
+        mp3_file["title"] = [title]
+        mp3_file.save()
+
+        mp3_file = MP3(self.get_song_path(song))
+        mp3_file.tags.add(
+            APIC(
+                encoding=3,
+                mime="image/png",
+                type=3,
+                desc="Cover",
+                data=self.get_song_cover_image(playlist.image_url),
             )
-            mp3_file.save()
+        )
+        mp3_file.save()
 
-    def write_song_tags(
+    def update_song_metadata(
         self, song: Song, artist: str, title: str, new_filename: str
     ) -> None:
-        """Write song tags to the song file"""
+        """Write the new artist and the new title to the song metadata"""
         song_copy = copy.deepcopy(song)
         song_copy.filename = new_filename
         mp3_file = MP3(self.get_song_path(song_copy), ID3=EasyID3)

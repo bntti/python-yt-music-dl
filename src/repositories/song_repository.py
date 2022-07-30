@@ -1,5 +1,5 @@
 import sqlite3
-from typing import List
+from typing import Dict, List, Optional
 
 from database_connection import get_database_connection
 from entities import Song
@@ -35,6 +35,14 @@ class SongRepository:
         rows = cursor.fetchall()
         return [self.row_to_song(row) for row in rows]
 
+    def get_song(self, song_url: str) -> Optional[Song]:
+        """Fetches a song with the corresponding URL and returns None if one does not exist"""
+        sql = "SELECT * FROM songs WHERE url = ?"
+        cursor = self._connection.cursor()
+        cursor.execute(sql, [song_url])
+        row = cursor.fetchone()
+        return None if not row else self.row_to_song(row)
+
     def album_count(self, song: Song) -> int:
         """Return the number of albums that contain the song"""
         sql = """SELECT COUNT(*) FROM playlists p, playlist_songs ps
@@ -43,6 +51,16 @@ class SongRepository:
         cursor.execute(sql, [song.url])
         row = cursor.fetchone()
         return int(row[0])
+
+    def export(self) -> List[Dict]:
+        """Export renamed song urls, artists and titles"""
+        cursor = self._connection.cursor()
+        cursor.execute("SELECT url, artist, title FROM songs WHERE renamed = true")
+        rows = cursor.fetchall()
+        return [
+            {"url": row["url"], "artist": row["artist"], "title": row["title"]}
+            for row in rows
+        ]
 
     def playlist_count(self, song: Song) -> int:
         """Return the number of playlists that contain the song"""

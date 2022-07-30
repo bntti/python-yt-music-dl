@@ -7,9 +7,9 @@ from services import song_service
 
 def download_songs():
     songs = song_repository.get_songs()
-    print(f"{TITLE}Going through songs{CLEAR}")
-    for i, song in enumerate(songs):
-        print(f"{SUBTITLE}Going through song {i+1}/{len(songs)}{CLEAR}")
+    print(f"{TITLE}Downloading songs{CLEAR}")
+    not_downloaded = []
+    for song in songs:
 
         album_count = song_repository.album_count(song)
         pl_count = song_repository.playlist_count(song)
@@ -25,11 +25,16 @@ def download_songs():
         else:
             playlist = playlist_repository.get_song_playlist(song)
 
-        # Download song
         if not song.downloaded:
-            filename = song_service.download_song(song)
-            song.filename = filename
+            not_downloaded.append((song, playlist))
 
-        # Check song tag
-        print(f"{INFO}Updating song metadata{CLEAR}")
-        file_repository.check_song_album(song, playlist)
+    if len(not_downloaded) == 0:
+        print(f"{INFO}All songs have been downloaded{CLEAR}")
+
+    for i, (song, playlist) in enumerate(not_downloaded):
+        print(f"{SUBTITLE}Downloading song {i+1}/{len(songs)}{CLEAR}")
+        filename = song_service.download_song(song)
+        song.filename = filename
+
+        print(f"{INFO}Writing song metadata{CLEAR}")
+        file_repository.write_song_metadata(song, playlist)

@@ -1,4 +1,4 @@
-from colors import CLEAR, ITALIC, SUBTITLE, TITLE
+from colors import CLEAR, INFO, ITALIC, SUBTITLE, TITLE
 from repositories import song_repository
 from services import song_renamer_service
 
@@ -6,7 +6,9 @@ from services import song_renamer_service
 def rename_songs():
     songs = song_repository.get_songs()
     print(f"{TITLE}Renaming songs{CLEAR}")
-    for i, song in enumerate(songs):
+
+    not_renamed = []
+    for song in songs:
         if song.renamed:
             continue
 
@@ -15,6 +17,12 @@ def rename_songs():
         if album_count == 0 and pl_count == 0:
             continue
 
+        not_renamed.append(song)
+
+    if len(not_renamed) == 0:
+        print(f"{INFO}All songs have been renamed{CLEAR}")
+
+    for i, song in enumerate(not_renamed):
         print(f"{SUBTITLE}Renaming song {i+1}/{len(songs)}{CLEAR}")
         print(f"Uploader '{song.uploader}'\nTitle: '{song.yt_title}'")
 

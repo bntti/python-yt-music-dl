@@ -26,7 +26,7 @@ class SongRenamerService:
 
         song_repository.set_song_as_renamed(song, artist, title, new_filename)
         file_repository.rename_song(song, new_filename)
-        file_repository.write_song_tags(song, artist, title, new_filename)
+        file_repository.update_song_metadata(song, artist, title, new_filename)
 
 
 song_renamer_service = SongRenamerService()
