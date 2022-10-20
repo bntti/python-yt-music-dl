@@ -1,4 +1,4 @@
-from colors import CLEAR, ITALIC, LINE, TITLE, WARN
+from custom_io import CLEAR, ITALIC, LINE, TITLE, WARN
 from initialize_database import initialize_database
 from phases import (
     check_playlists,
@@ -29,9 +29,10 @@ def main() -> None:
         print(MENU_STR)
         command = input("Command: ").lower()
         if command == "d":
-            check_playlists()
-            download_songs()
-            remove_orphans()
+            functions = [check_playlists, download_songs, remove_orphans]
+            for function in functions:
+                if not function():
+                    break
         elif command == "r":
             rename_songs()
         elif command == "u":

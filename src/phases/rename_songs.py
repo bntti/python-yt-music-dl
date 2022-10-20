@@ -1,25 +1,23 @@
 from typing import List
 
-from colors import CLEAR, INFO, ITALIC, SUBTITLE, TITLE
+import custom_io as io
 from entities import Song
 from repositories import song_repository
 from services import song_renamer_service
 
 
-def _rename_songs(songs: List[Song], not_renamed: List[Song]) -> None:
+def _rename_songs(not_renamed: List[Song]) -> None:
     """Rename the songs in the not_renamed list using user input"""
     for i, song in enumerate(not_renamed):
-        print(f"{SUBTITLE}Renaming song {i+1}/{len(not_renamed)}{CLEAR}")
-        print(
-            f"Uploader {ITALIC}{song.uploader}{CLEAR}\nTitle: {ITALIC}{song.yt_title}{CLEAR}"
-        )
+        io.subtitle(f"Renaming song {i+1}/{len(not_renamed)}")
+        io.info("Uploader %s\nTitle: %s", song.uploader, song.yt_title)
 
         artist = song.uploader
         title = song.yt_title
         if " - " in song.yt_title:
             artist, title = song.yt_title.split(" - ")[0:2]
-        input_artist = input(f"Song artist [{ITALIC}{artist}{CLEAR}]: ")
-        input_title = input(f"Song title [{ITALIC}{title}{CLEAR}]: ")
+        input_artist = io.inpt("Song artist [%s]: ", artist)
+        input_title = io.inpt("Song title [%s]: ", title)
         artist = input_artist if input_artist else artist
         title = input_title if input_title else title
 
@@ -29,7 +27,7 @@ def _rename_songs(songs: List[Song], not_renamed: List[Song]) -> None:
 def rename_songs() -> None:
     """Rename songs that have not been downloaded yet using user input"""
     songs = song_repository.get_songs()
-    print(f"{TITLE}Renaming songs{CLEAR}")
+    io.title("Renaming songs")
 
     not_renamed = []
     for song in songs:
@@ -44,6 +42,6 @@ def rename_songs() -> None:
         not_renamed.append(song)
 
     if len(not_renamed) == 0:
-        print(f"{INFO}All songs have been renamed{CLEAR}")
-
-    _rename_songs(songs, not_renamed)
+        io.info("All songs have been renamed")
+    else:
+        _rename_songs(not_renamed)

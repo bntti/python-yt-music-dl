@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from database_connection import get_database_connection
 from entities import Song
@@ -34,13 +34,17 @@ class SongRepository:
         rows = cursor.fetchall()
         return [self.row_to_song(row) for row in rows]
 
-    def get_song(self, song_url: str) -> Optional[Song]:
+    def get_song(self, song_url: str) -> Song:
         """Fetches a song with the corresponding URL and returns None if one does not exist"""
         sql = "SELECT * FROM songs WHERE url = ?"
         cursor = self._connection.cursor()
         cursor.execute(sql, [song_url])
         row = cursor.fetchone()
-        return None if not row else self.row_to_song(row)
+
+        if not row:
+            raise Exception(f"No song in the database with url {song_url}")
+
+        return self.row_to_song(row)
 
     def album_count(self, song: Song) -> int:
         """Return the number of albums that contain the song"""
@@ -84,17 +88,16 @@ class SongRepository:
         cursor.execute(sql, [filename, song.url])
         return bool(cursor.fetchone())
 
-    def song_exists(self, song: Song) -> bool:
+    def song_exists(self, song_url: str) -> bool:
         """Check if song is in the database"""
         sql = "SELECT 1 FROM songs WHERE url = ?"
         cursor = self._connection.cursor()
-        cursor.execute(sql, [song.url])
+        cursor.execute(sql, [song_url])
         return bool(cursor.fetchone())
 
     def add_song(self, song: Song) -> None:
         """Add song to the database"""
-        if not self.song_exists(song):
-            print(song.url, song.uploader, song.yt_title, song.length)
+        if not self.song_exists(song.url):
             cursor = self._connection.cursor()
             sql = """INSERT INTO songs (url, uploader, yt_title, length)
                     VALUES (?, ?, ?, ?)"""

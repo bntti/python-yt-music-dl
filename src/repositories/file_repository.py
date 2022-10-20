@@ -86,7 +86,7 @@ def write_cover_images(playlist: Playlist) -> None:
                 mime="image/png",
                 type=3,
                 desc="Cover",
-                data=get_song_cover_image(playlist.image_url),
+                data=image_data,
             )
         )
         mp3_file.save()

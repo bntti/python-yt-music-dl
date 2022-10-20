@@ -1,6 +1,6 @@
 from pathvalidate import sanitize_filepath
 
-from colors import CLEAR, WARN
+import custom_io as io
 from entities import Song
 from repositories import file_repository, song_repository
 
@@ -12,9 +12,8 @@ def rename_song(song: Song, artist: str, title: str) -> None:
 
     filename_exists = song_repository.filename_exists(new_filename, song)
     if song.filename != new_filename and filename_exists:
-        print(
-            f"{WARN}Another song with same filename exists, "
-            f"adding _<number> to the end of the filename{CLEAR}"
+        io.warn(
+            "Another song with same filename exists, adding _<number> to the end of the filename"
         )
         num = 2
         original_filename = new_filename

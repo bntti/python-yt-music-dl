@@ -2,7 +2,7 @@ import json
 import os
 import sys
 
-from colors import CLEAR, TITLE
+from custom_io import CLEAR, TITLE
 
 file_dir = os.path.dirname(__file__)
 

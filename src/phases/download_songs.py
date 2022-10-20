@@ -1,14 +1,12 @@
-import sys
-
-from colors import CLEAR, ERROR, INFO, SUBTITLE, TITLE
+import custom_io as io
 from repositories import file_repository, playlist_repository, song_repository
 from services import song_service
 
 
-def download_songs() -> None:
+def download_songs() -> bool:
     """Download songs that have not been downloaded yet and write some metadata to them"""
     songs = song_repository.get_songs()
-    print(f"{TITLE}Downloading songs{CLEAR}")
+    io.title("Downloading songs")
     not_downloaded = []
     for song in songs:
         album_count = song_repository.album_count(song)
@@ -17,10 +15,13 @@ def download_songs() -> None:
             continue
 
         if album_count > 1:
-            sys.exit(f"{ERROR}Song {song} is in more than one album{CLEAR}")
-        elif album_count == 0 and pl_count > 1:
-            sys.exit(f"{ERROR}Song {song} is in more than one playlist{CLEAR}")
-        elif album_count == 1:
+            io.error("Song %s is in more than one album", song)
+            return False
+        if album_count == 0 and pl_count > 1:
+            io.error("Song %s is in more than one playlist", song)
+            return False
+
+        if album_count == 1:
             playlist = playlist_repository.get_song_album(song)
         else:
             playlist = playlist_repository.get_song_playlist(song)
@@ -29,16 +30,18 @@ def download_songs() -> None:
             not_downloaded.append((song, playlist))
 
     if len(not_downloaded) == 0:
-        print(f"{INFO}All songs have been downloaded{CLEAR}")
+        io.info("All songs have been downloaded")
 
     for i, (song, playlist) in enumerate(not_downloaded):
-        print(f"{SUBTITLE}Downloading song {i+1}/{len(not_downloaded)}{CLEAR}")
+        io.subtitle(f"Downloading song {i+1}/{len(not_downloaded)}")
         filename = song_service.download_song(song)
         song.filename = filename
 
-        print(f"{INFO}Writing song metadata{CLEAR}")
+        io.info("Writing song metadata")
         file_repository.write_song_metadata(song, playlist)
 
-    print(f"{SUBTITLE}Updating cover images{CLEAR}")
+    io.subtitle("Updating cover images")
     for playlist in playlist_repository.get_playlists():
         file_repository.write_cover_images(playlist)
+
+    return True

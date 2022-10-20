@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 from database_connection import get_database_connection
 from entities import Playlist, Song
