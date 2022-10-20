@@ -7,7 +7,6 @@ class Song:  # pylint: disable=[R0902]
     Attributes:
         url (str): Song Youtube URL
         yt_title (str): Song title on Youtube
-        image_url (str): Song thumbnail on Youtube
         length (int): Song length in seconds
         downloaded (bool): True if the song file is downloaded.
         filename (str): Song file filename.
@@ -21,7 +20,6 @@ class Song:  # pylint: disable=[R0902]
         url: str,
         uploader: str,
         yt_title: str,
-        image_url: str,
         length: int,
         downloaded: bool = False,
         filename: Optional[str] = None,
@@ -35,7 +33,6 @@ class Song:  # pylint: disable=[R0902]
             url (str): Song Youtube URL
             uploader (str): Song uploader on Youtube
             yt_title (str): Song title on Youtube
-            image_url (str): Song thumbnail on Youtube
             length (int): Song length in seconds
             downloaded (bool, optional): True if the song file is downloaded. Defaults to False.
             filename (Optional[str], optional): Song file filename. Defaults to None.
@@ -47,7 +44,6 @@ class Song:  # pylint: disable=[R0902]
         self.url = url
         self.uploader = uploader
         self.yt_title = yt_title
-        self.image_url = image_url
         self.length = length
         self.downloaded = downloaded
         self.filename = filename

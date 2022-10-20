@@ -5,7 +5,7 @@ from colors import CLEAR, INFO, ITALIC, SUBTITLE, TITLE, WARN
 from config import CONFIG
 from entities import Playlist
 from repositories import playlist_repository
-from services import playlist_service
+from services import youtube_api_service
 
 
 def check_for_removed_playlists(
@@ -64,7 +64,7 @@ def check_playlists():
     print(f"{SUBTITLE}Downloading the playlist data from YouTube{CLEAR}")
     remote_playlists = []
     for url in urls:
-        remote_playlists.append(playlist_service.get_remote_playlist(url))
+        remote_playlists.append(youtube_api_service.get_playlist(url))
     local_playlists = playlist_repository.get_playlists()
 
     print(f"{SUBTITLE}Checking the playlists{CLEAR}")

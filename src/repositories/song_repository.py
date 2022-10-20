@@ -1,4 +1,3 @@
-import sqlite3
 from typing import Dict, List, Optional
 
 from database_connection import get_database_connection
@@ -18,7 +17,6 @@ class SongRepository:
             row["url"],
             row["uploader"],
             row["yt_title"],
-            row["image_url"],
             row["length"],
             row["downloaded"],
             row["filename"],
@@ -95,12 +93,13 @@ class SongRepository:
     def add_song(self, song: Song) -> None:
         """Add song to the database"""
         if not self.song_exists(song):
+            print(song.url, song.uploader, song.yt_title, song.length)
             cursor = self._connection.cursor()
-            sql = """INSERT INTO songs (url, uploader, yt_title, image_url, length)
-                    VALUES (?, ?, ?, ?, ?)"""
+            sql = """INSERT INTO songs (url, uploader, yt_title, length)
+                    VALUES (?, ?, ?, ?)"""
             cursor.execute(
                 sql,
-                [song.url, song.uploader, song.yt_title, song.image_url, song.length],
+                [song.url, song.uploader, song.yt_title, song.length],
             )
             self._connection.commit()
 

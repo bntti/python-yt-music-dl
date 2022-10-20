@@ -1,5 +1,4 @@
 import sys
-from typing import Optional
 
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import DownloadError
@@ -9,36 +8,63 @@ from config import SONG_DIR
 from entities import Playlist, Song
 
 
-def get_playlist(playlist_url: str) -> Optional[Playlist]:
+def get_song_thumbnail_url(song_url: str) -> str:
+    try:
+        ydl_opts = {"skip_download": True, "quiet": True}
+        with YoutubeDL(ydl_opts) as ydl:
+            song = ydl.extract_info(song_url)
+    except DownloadError:
+        sys.exit(f"{ERROR}Unable to get song data for song with URL: {song_url}{CLEAR}")
+
+    song_url = ""
+    maxsize = 0
+    for x in song["thumbnails"]:
+        if "resolution" in x:
+            if int(x["height"] > maxsize):
+                maxsize = int(x["height"])
+                song_url = x["url"]
+    return song_url
+
+
+def get_playlist(playlist_url: str) -> Playlist:
     """Downloads playlist data from YouTube and
     returns a Playlist object and None if the download failed
     """
+    if "youtube.com/playlist?list=" not in playlist_url:
+        sys.exit(f"{ERROR}Bad playlist URL: {playlist_url}{CLEAR}")
+
     try:
         ydl_opts = {"extract_flat": "in_playlist", "quiet": True}
         with YoutubeDL(ydl_opts) as ydl:
             playlist = ydl.extract_info(playlist_url)
     except DownloadError:
-        return None
+        sys.exit(
+            f"{ERROR}Failed to download playlist data ",
+            f"for playlist with URL: {playlist_url}{CLEAR}",
+        )
 
     songs = []
     for song in playlist["entries"]:
+        if song["uploader"] is None:
+            sys.exit(
+                f"{ERROR}There is an invalid song in playlist {ITALIC}{playlist['title']}{ERROR}, "
+                f"you should remove it from the playlist to continue{CLEAR}",
+            )
         songs.append(
             Song(
                 song["url"],
                 song["uploader"],
                 song["title"],
-                song["thumbnails"][3]["url"],
                 song["duration"],
             )
         )
 
     is_album = len(playlist["thumbnails"]) == 3
-    thumbnail_id = 1 if is_album else 3
 
     return Playlist(
         playlist["webpage_url"],
         playlist["title"],
-        playlist["thumbnails"][thumbnail_id]["url"],
+        get_song_thumbnail_url(songs[0].url),
         is_album,
         songs,
     )

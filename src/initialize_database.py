@@ -45,7 +45,6 @@ def create_tables(connection: Connection):
             url        TEXT NOT NULL PRIMARY KEY,
             yt_title   TEXT NOT NULL,
             uploader   TEXT NOT NULL,
-            image_url  TEXT NOT NULL,
             length     INT  NOT NULL,
             downloaded BOOL NOT NULL DEFAULT false,
             filename   TEXT,
