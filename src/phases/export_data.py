@@ -5,7 +5,7 @@ from colors import CLEAR, INFO, ITALIC, TITLE
 from repositories import song_repository
 
 
-def export_data():
+def export_data() -> None:
     """Export song renaming data to ../../export.json"""
     print(f"{TITLE}Exporting renaming data{CLEAR}")
     data = song_repository.export()

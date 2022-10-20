@@ -12,10 +12,13 @@ from PIL import Image, ImageFilter
 
 from config import CONFIG, SONG_DIR, SONG_EXT
 from entities import Playlist, Song
+from repositories import song_repository
 
 
 def get_song_path(song: Song) -> str:
     """Get path of song file"""
+    if song.filename is None:
+        raise Exception(f"Tried to get path to song {song} with no filname")
     return os.path.join(SONG_DIR, song.filename + SONG_EXT)
 
 
@@ -28,7 +31,7 @@ def rename_song(song: Song, new_filename: str) -> None:
     shutil.move(old_path, new_path)
 
 
-def generate_square_image(image: Image) -> Image:
+def generate_square_image(image: Image.Image) -> Image.Image:
     """Convert image to 1:1 by adding blur"""
     original_w, original_h = image.size
     factor = max(original_w, original_h) / min(original_w, original_h)
@@ -66,7 +69,31 @@ def get_song_cover_image(image_url: str) -> bytes:
     return buf.getvalue()
 
 
-def write_song_metadata(song: Song, playlist: Playlist):
+def write_cover_images(playlist: Playlist) -> None:
+    """Write/update song cover images"""
+    image_data = get_song_cover_image(playlist.image_url)
+
+    for song in playlist:
+        if song.image_url == playlist.image_url:
+            continue
+
+        mp3_file = MP3(get_song_path(song), ID3=EasyID3)
+
+        mp3_file = MP3(get_song_path(song))
+        mp3_file.tags.add(
+            APIC(
+                encoding=3,
+                mime="image/png",
+                type=3,
+                desc="Cover",
+                data=get_song_cover_image(playlist.image_url),
+            )
+        )
+        mp3_file.save()
+        song_repository.update_song_image_url(song, playlist.image_url)
+
+
+def write_song_metadata(song: Song, playlist: Playlist) -> None:
     """Write the song metadata"""
     mp3_file = MP3(get_song_path(song), ID3=EasyID3)
     mp3_file["album"] = [playlist.title]
@@ -77,18 +104,6 @@ def write_song_metadata(song: Song, playlist: Playlist):
         artist, title = song.yt_title.split(" - ")[0:2]
     mp3_file["artist"] = [artist]
     mp3_file["title"] = [title]
-    mp3_file.save()
-
-    mp3_file = MP3(get_song_path(song))
-    mp3_file.tags.add(
-        APIC(
-            encoding=3,
-            mime="image/png",
-            type=3,
-            desc="Cover",
-            data=get_song_cover_image(playlist.image_url),
-        )
-    )
     mp3_file.save()
 
 

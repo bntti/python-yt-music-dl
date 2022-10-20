@@ -26,7 +26,7 @@ def _rename_songs(songs: List[Song], not_renamed: List[Song]) -> None:
         song_renamer_service.rename_song(song, artist, title)
 
 
-def rename_songs():
+def rename_songs() -> None:
     """Rename songs that have not been downloaded yet using user input"""
     songs = song_repository.get_songs()
     print(f"{TITLE}Renaming songs{CLEAR}")

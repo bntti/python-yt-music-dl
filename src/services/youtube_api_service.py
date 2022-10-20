@@ -8,13 +8,25 @@ from config import SONG_DIR
 from entities import Playlist, Song
 
 
+def song_download_fail(song_url: str):
+    sys.exit(f"{ERROR}Unable to get song data for song with URL: {song_url}{CLEAR}")
+
+
+def playlist_download_fail(playlist_url: str):
+    sys.exit(
+        f"{ERROR}Failed to download playlist data for playlist with URL: {playlist_url}{CLEAR}",
+    )
+
+
 def get_song_thumbnail_url(song_url: str) -> str:
     try:
         ydl_opts = {"skip_download": True, "quiet": True}
         with YoutubeDL(ydl_opts) as ydl:
             song = ydl.extract_info(song_url)
     except DownloadError:
-        sys.exit(f"{ERROR}Unable to get song data for song with URL: {song_url}{CLEAR}")
+        song_download_fail(song_url)
+    if song is None:
+        song_download_fail(song_url)
 
     song_url = ""
     maxsize = 0
@@ -38,10 +50,9 @@ def get_playlist(playlist_url: str) -> Playlist:
         with YoutubeDL(ydl_opts) as ydl:
             playlist = ydl.extract_info(playlist_url)
     except DownloadError:
-        sys.exit(
-            f"{ERROR}Failed to download playlist data ",
-            f"for playlist with URL: {playlist_url}{CLEAR}",
-        )
+        playlist_download_fail(playlist_url)
+    if playlist is None:
+        playlist_download_fail(playlist_url)
 
     songs = []
     for song in playlist["entries"]:

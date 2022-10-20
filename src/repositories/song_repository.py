@@ -7,11 +7,11 @@ from entities import Song
 class SongRepository:
     """Handles saving song objects to the database"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._connection = get_database_connection()
 
     @staticmethod
-    def row_to_song(row: list) -> Song:
+    def row_to_song(row: dict) -> Song:
         """Convert a SQL row object to a Song object"""
         return Song(
             row["url"],
@@ -20,6 +20,7 @@ class SongRepository:
             row["length"],
             row["downloaded"],
             row["filename"],
+            row["image_url"],
             row["renamed"],
             row["artist"],
             row["title"],
@@ -108,6 +109,13 @@ class SongRepository:
         sql = "UPDATE songs SET downloaded = true, filename = ? WHERE url = ?"
         cursor = self._connection.cursor()
         cursor.execute(sql, [filename, song.url])
+        self._connection.commit()
+
+    def update_song_image_url(self, song: Song, image_url: str) -> None:
+        """Set song as downloaded and save the song filename to the database"""
+        sql = "UPDATE songs SET image_url = ? WHERE url = ?"
+        cursor = self._connection.cursor()
+        cursor.execute(sql, [image_url, song.url])
         self._connection.commit()
 
     def set_song_as_renamed(

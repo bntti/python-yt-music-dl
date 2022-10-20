@@ -26,7 +26,7 @@ class PlaylistRepository:
             playlists.append(playlist)
         return playlists
 
-    def get_playlist(self, url: str) -> Optional[Playlist]:
+    def get_playlist(self, url: str) -> Playlist:
         """Fetches the playlist with the corresponding url. Returns None if one doesn't exist"""
         cursor = self._connection.cursor()
         sql = "SELECT url, title, image_url, is_album FROM playlists WHERE url = ?"
@@ -34,7 +34,7 @@ class PlaylistRepository:
         row = cursor.fetchone()
 
         if not row:
-            return None
+            raise Exception(f"No playlist exists with url {url}")
 
         songs = self.get_playlist_songs(row["url"])
         return Playlist(

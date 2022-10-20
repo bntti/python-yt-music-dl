@@ -7,12 +7,14 @@ from phases import (
     import_data,
     remove_orphans,
     rename_songs,
+    update_cover_images,
 )
 
 MENU_STR = f"""{LINE}------------------------------{CLEAR}
 {TITLE}What do you want to do?{CLEAR}
     {ITALIC}d{CLEAR} | download songs
     {ITALIC}r{CLEAR} | rename songs
+    {ITALIC}u{CLEAR} | update cover images
     {ITALIC}e{CLEAR} | export renaming data
     {ITALIC}i{CLEAR} | import renaming data
     {ITALIC}q{CLEAR} | quit
@@ -32,6 +34,8 @@ def main() -> None:
             remove_orphans()
         elif command == "r":
             rename_songs()
+        elif command == "u":
+            update_cover_images()
         elif command == "e":
             export_data()
         elif command == "i":

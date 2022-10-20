@@ -7,7 +7,7 @@ from repositories import file_repository, song_repository
 
 def rename_song(song: Song, artist: str, title: str) -> None:
     """Rename song to format artist - title and add the new data to the database"""
-    new_filename = sanitize_filepath(f"{artist} - {title}")
+    new_filename = str(sanitize_filepath(f"{artist} - {title}"))
     new_filename = new_filename.replace("/", "")
 
     filename_exists = song_repository.filename_exists(new_filename, song)

@@ -2,7 +2,7 @@ from colors import CLEAR, ITALIC, TITLE, WARN
 from repositories import file_repository, song_repository
 
 
-def remove_orphans():
+def remove_orphans() -> None:
     """Remove songs that are not in any playlist"""
     songs = song_repository.get_songs()
     print(f"{TITLE}Removing orphans{CLEAR}")

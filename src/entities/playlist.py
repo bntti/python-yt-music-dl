@@ -51,5 +51,10 @@ class Playlist:
         self.song_index += 1
         return self.songs[self.song_index - 1]
 
+    def __getitem__(self, index: int) -> "Song":
+        if index < 0 or index >= len(self.songs):
+            raise Exception(f"Invalid song index {index} for playlist {self.title}")
+        return self.songs[index]
+
     def __str__(self) -> str:
         return self.title

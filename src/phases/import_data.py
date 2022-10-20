@@ -7,7 +7,7 @@ from repositories import song_repository
 from services import song_renamer_service
 
 
-def import_data():
+def import_data() -> None:
     """Import song renaming data from ../../export.json and rename songs according to it"""
     print(f"{TITLE}Importing song renaming data{CLEAR}")
     file_dir = os.path.dirname(__file__)
@@ -22,7 +22,6 @@ def import_data():
     for i, song_data in enumerate(data):
         song = song_repository.get_song(song_data["url"])
         if song is not None:
-            print(f"{SUBTITLE}Renaming song {i+1}/{len(data)}{CLEAR}")
             song_renamer_service.rename_song(
                 song, song_data["artist"], song_data["title"]
             )

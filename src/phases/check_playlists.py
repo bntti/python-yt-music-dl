@@ -10,7 +10,7 @@ from services import youtube_api_service
 
 def check_for_removed_playlists(
     local_playlists: List[Playlist], remote_playlists: List[Playlist]
-):
+) -> None:
     """Check if any playlists have been removed"""
     to_be_removed = []
     for local_playlist in local_playlists:
@@ -54,7 +54,7 @@ def check_songs(remote_playlists: List[Playlist]) -> None:
                 playlist_repository.add_song_to_playlist(local_playlist, song)
 
 
-def check_playlists():
+def check_playlists() -> None:
     """Check playlists for changes"""
     urls = CONFIG["playlist_urls"]
     if len(urls) == 0:

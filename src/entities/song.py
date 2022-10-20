@@ -10,6 +10,7 @@ class Song:  # pylint: disable=[R0902]
         length (int): Song length in seconds
         downloaded (bool): True if the song file is downloaded.
         filename (str): Song file filename.
+        image_url (str): Url to the cover image of the song
         renamed (bool): True if the song has been renamed (artist and title have been set).
         title (str): Actual song title.
         artist (str): Song artist.
@@ -23,6 +24,7 @@ class Song:  # pylint: disable=[R0902]
         length: int,
         downloaded: bool = False,
         filename: Optional[str] = None,
+        image_url: Optional[str] = None,
         renamed: bool = False,
         artist: Optional[str] = None,
         title: Optional[str] = None,
@@ -36,6 +38,7 @@ class Song:  # pylint: disable=[R0902]
             length (int): Song length in seconds
             downloaded (bool, optional): True if the song file is downloaded. Defaults to False.
             filename (Optional[str], optional): Song file filename. Defaults to None.
+            image_url (Optional[str], optional): Url to the cover image of the song
             renamed (bool, optional): True if the song has been
             renamed (artist and title have been set).
             artist (Optional[str], optional): Song artist. Defaults to None.
@@ -47,39 +50,10 @@ class Song:  # pylint: disable=[R0902]
         self.length = length
         self.downloaded = downloaded
         self.filename = filename
+        self.image_url = image_url
         self.renamed = renamed
         self.artist = artist
         self.title = title
-
-    def __eq__(self, other: "Song") -> bool:
-        if not isinstance(other, self.__class__):
-            return False
-        return (
-            self.url == other.url
-            and self.uploader == other.uploader
-            and self.yt_title == other.yt_title
-            and self.length == other.length
-            and self.downloaded == other.downloaded
-            and self.filename == other.filename
-            and self.renamed == other.renamed
-            and self.artist == other.artist
-            and self.title == other.title
-        )
-
-    def __hash__(self) -> int:
-        return hash(
-            (
-                self.url,
-                self.uploader,
-                self.yt_title,
-                self.length,
-                self.downloaded,
-                self.filename,
-                self.renamed,
-                self.artist,
-                self.title,
-            )
-        )
 
     def __str__(self) -> str:
         if self.renamed:

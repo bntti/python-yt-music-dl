@@ -3,7 +3,7 @@ from sqlite3 import Connection
 from database_connection import get_database_connection
 
 
-def drop_tables(connection: Connection):
+def drop_tables(connection: Connection) -> None:
     """Drop all tables"""
     cursor = connection.cursor()
 
@@ -14,7 +14,7 @@ def drop_tables(connection: Connection):
     connection.commit()
 
 
-def create_tables(connection: Connection):
+def create_tables(connection: Connection) -> None:
     """Create all tables"""
     cursor = connection.cursor()
 
@@ -48,6 +48,7 @@ def create_tables(connection: Connection):
             length     INT  NOT NULL,
             downloaded BOOL NOT NULL DEFAULT false,
             filename   TEXT,
+            image_url  TEXT,
             renamed    bool NOT NULL DEFAULT false,
             artist     TEXT,
             title      TEXT
@@ -58,7 +59,7 @@ def create_tables(connection: Connection):
     connection.commit()
 
 
-def clear_tables():
+def clear_tables() -> None:
     """Delete all data from the database"""
     connection = get_database_connection()
     cursor = connection.cursor()
@@ -68,14 +69,14 @@ def clear_tables():
     connection.commit()
 
 
-def reset_database():
+def reset_database() -> None:
     """Drop all tables and recreate them"""
     connection = get_database_connection()
     drop_tables(connection)
     create_tables(connection)
 
 
-def initialize_database():
+def initialize_database() -> None:
     """Create the database tables if necessary"""
     connection = get_database_connection()
     cursor = connection.cursor()
