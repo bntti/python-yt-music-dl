@@ -1,7 +1,7 @@
 from typing import Optional
 
 
-class Song:  # pylint: disable=[R0902]
+class Song:  # pylint: disable=[R0902,R0903]
     """Song object, matches a song on Youtube.
 
     Attributes:

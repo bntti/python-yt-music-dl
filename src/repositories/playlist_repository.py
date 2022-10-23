@@ -14,73 +14,48 @@ class PlaylistRepository:
     def get_playlists(self) -> List[Playlist]:
         """Fetches a list of all the playlists from the database"""
         cursor = self._connection.cursor()
-        cursor.execute("SELECT url, title, image_url, is_album FROM playlists")
+        cursor.execute("SELECT url, title, image_url FROM playlists")
         rows = cursor.fetchall()
 
         playlists = []
         for row in rows:
-            songs = self.get_playlist_songs(row["url"])
-            playlist = Playlist(
-                row["url"], row["title"], row["image_url"], row["is_album"], songs
-            )
+            songs = song_repository.get_playlist_songs(row["url"])
+            playlist = Playlist(row["url"], row["title"], row["image_url"], songs)
             playlists.append(playlist)
         return playlists
 
     def get_playlist(self, url: str) -> Playlist:
         """Fetches the playlist with the corresponding url. Returns None if one doesn't exist"""
         cursor = self._connection.cursor()
-        sql = "SELECT url, title, image_url, is_album FROM playlists WHERE url = ?"
+        sql = "SELECT url, title, image_url FROM playlists WHERE url = ?"
         cursor.execute(sql, [url])
         row = cursor.fetchone()
 
         if not row:
-            raise Exception(f"No playlist exists with url {url}")
+            raise Exception(f"Tried to get playlist that does not exist (URL: {url})")
 
-        songs = self.get_playlist_songs(row["url"])
-        return Playlist(
-            row["url"], row["title"], row["image_url"], row["is_album"], songs
-        )
-
-    def get_playlist_songs(self, playlist_url: str) -> List[Song]:
-        """Fetches the list of songs that are in the specified playlist"""
-        sql = """SELECT s.*
-                 FROM songs s, playlist_songs ps
-                 WHERE ps.playlist_url = ? AND ps.song_url = s.url"""
-        cursor = self._connection.cursor()
-        cursor.execute(sql, [playlist_url])
-        rows = cursor.fetchall()
-        return [song_repository.row_to_song(row) for row in rows]
-
-    def get_song_album(self, song: Song) -> Playlist:
-        """Get the album that the song is in"""
-        sql = """SELECT p.url, p.title, p.image_url, p.is_album
-                 FROM playlists p, playlist_songs ps
-                 WHERE p.is_album = true AND ps.playlist_url = p.url AND ps.song_url = ?"""
-        cursor = self._connection.cursor()
-        cursor.execute(sql, [song.url])
-        row = cursor.fetchone()
-        return Playlist(
-            row["url"],
-            row["title"],
-            row["image_url"],
-            row["is_album"],
-            self.get_playlist_songs(row["url"]),
-        )
+        songs = song_repository.get_playlist_songs(row["url"])
+        return Playlist(row["url"], row["title"], row["image_url"], songs)
 
     def get_song_playlist(self, song: Song) -> Playlist:
         """Get the playlist that the song is in"""
-        sql = """SELECT p.url, p.title, p.image_url, p.is_album
-                 FROM playlists p, playlist_songs ps
-                 WHERE p.is_album = false AND ps.playlist_url = p.url AND ps.song_url = ?"""
+        sql = """SELECT p.url, p.title, p.image_url
+                 FROM playlists p, songs s
+                 WHERE s.playlist_url = p.url AND s.url = ?"""
         cursor = self._connection.cursor()
         cursor.execute(sql, [song.url])
         row = cursor.fetchone()
+
+        if not row:
+            raise Exception(
+                f"Tried to get playlist for song that does not have a playlist (song: {song})"
+            )
+
         return Playlist(
             row["url"],
             row["title"],
             row["image_url"],
-            row["is_album"],
-            self.get_playlist_songs(row["url"]),
+            song_repository.get_playlist_songs(row["url"]),
         )
 
     def playlist_exists(self, playlist: Playlist) -> bool:
@@ -92,37 +67,22 @@ class PlaylistRepository:
 
     def add_playlist(self, playlist: Playlist) -> None:
         """Add a playlist to the database"""
-        sql = "INSERT INTO playlists (url, title, image_url, is_album) VALUES (?, ?, ?, ?)"
+        sql = "INSERT INTO playlists (url, title, image_url) VALUES (?, ?, ?)"
         cursor = self._connection.cursor()
-        cursor.execute(
-            sql, [playlist.url, playlist.title, playlist.image_url, playlist.is_album]
-        )
+        cursor.execute(sql, [playlist.url, playlist.title, playlist.image_url])
         self._connection.commit()
 
         for song in playlist:
-            self.add_song_to_playlist(playlist, song)
-
-    def add_song_to_playlist(self, playlist: Playlist, song: Song) -> None:
-        """Adds a song to the playlist"""
-        song_repository.add_song(song)
-
-        sql = "INSERT INTO playlist_songs (playlist_url, song_url) VALUES (?, ?)"
-        cursor = self._connection.cursor()
-        cursor.execute(sql, [playlist.url, song.url])
-        self._connection.commit()
+            if song_repository.song_exists(song.url):
+                song_repository.update_song_playlist(playlist, song)
+            else:
+                song_repository.add_song(playlist, song)
 
     def remove_playlist(self, playlist: Playlist) -> None:
         """Removes a playlist from the database"""
         sql = "DELETE FROM playlists WHERE url = ?"
         cursor = self._connection.cursor()
         cursor.execute(sql, [playlist.url])
-        self._connection.commit()
-
-    def remove_song_from_playlist(self, playlist: Playlist, song: Song) -> None:
-        """Removes a playlist from the playlist"""
-        sql = "DELETE FROM playlist_songs WHERE playlist_url = ? AND song_url = ?"
-        cursor = self._connection.cursor()
-        cursor.execute(sql, [playlist.url, song.url])
         self._connection.commit()
 
 

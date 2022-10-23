@@ -29,18 +29,7 @@ def rename_songs() -> None:
     songs = song_repository.get_songs()
     io.title("Renaming songs")
 
-    not_renamed = []
-    for song in songs:
-        if song.renamed:
-            continue
-
-        album_count = song_repository.album_count(song)
-        pl_count = song_repository.playlist_count(song)
-        if album_count == 0 and pl_count == 0:
-            continue
-
-        not_renamed.append(song)
-
+    not_renamed = [song for song in songs if not song.renamed]
     if len(not_renamed) == 0:
         io.info("All songs have been renamed")
     else:

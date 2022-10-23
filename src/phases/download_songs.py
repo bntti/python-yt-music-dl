@@ -9,22 +9,7 @@ def download_songs() -> bool:
     io.title("Downloading songs")
     not_downloaded = []
     for song in songs:
-        album_count = song_repository.album_count(song)
-        pl_count = song_repository.playlist_count(song)
-        if album_count == 0 and pl_count == 0:
-            continue
-
-        if album_count > 1:
-            io.error("Song %s is in more than one album", song)
-            return False
-        if album_count == 0 and pl_count > 1:
-            io.error("Song %s is in more than one playlist", song)
-            return False
-
-        if album_count == 1:
-            playlist = playlist_repository.get_song_album(song)
-        else:
-            playlist = playlist_repository.get_song_playlist(song)
+        playlist = playlist_repository.get_song_playlist(song)
 
         if not song.downloaded:
             not_downloaded.append((song, playlist))

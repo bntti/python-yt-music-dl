@@ -55,7 +55,7 @@ def generate_square_image(image: Image.Image) -> Image.Image:
 
 def get_song_cover_image(image_url: str) -> bytes:
     """Generate cover image from image url"""
-    data = requests.get(image_url).content
+    data = requests.get(image_url, timeout=10).content
     image = Image.open(BytesIO(data))
     original_w, original_h = image.size
 

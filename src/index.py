@@ -1,4 +1,5 @@
-from custom_io import CLEAR, ITALIC, LINE, TITLE, WARN
+import custom_io as io
+from custom_io import CLEAR, LINE, OPTION, TITLE
 from initialize_database import initialize_database
 from phases import (
     check_playlists,
@@ -12,12 +13,12 @@ from phases import (
 
 MENU_STR = f"""{LINE}------------------------------{CLEAR}
 {TITLE}What do you want to do?{CLEAR}
-    {ITALIC}d{CLEAR} | download songs
-    {ITALIC}r{CLEAR} | rename songs
-    {ITALIC}u{CLEAR} | update cover images
-    {ITALIC}e{CLEAR} | export renaming data
-    {ITALIC}i{CLEAR} | import renaming data
-    {ITALIC}q{CLEAR} | quit
+    {OPTION}d{CLEAR} | download songs
+    {OPTION}r{CLEAR} | rename songs
+    {OPTION}u{CLEAR} | update cover images
+    {OPTION}e{CLEAR} | export renaming data
+    {OPTION}i{CLEAR} | import renaming data
+    {OPTION}q{CLEAR} | quit
 {LINE}------------------------------{CLEAR}"""
 
 
@@ -27,7 +28,10 @@ def main() -> None:
 
     while True:
         print(MENU_STR)
-        command = input("Command: ").lower()
+        try:
+            command = input("Command: ").lower()
+        except EOFError:
+            command = "q"
         if command == "d":
             functions = [check_playlists, download_songs, remove_orphans]
             for function in functions:
@@ -44,7 +48,7 @@ def main() -> None:
         elif command in ("q", ""):
             break
         else:
-            print(f"{WARN}Invalid command {ITALIC}{command}{CLEAR}")
+            io.warn("Invalid command %s", command)
 
         print()
 

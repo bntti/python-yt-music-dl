@@ -14,6 +14,8 @@ def get_song_thumbnail_url(song_url: str) -> str:
             song = ydl.extract_info(song_url)
     except DownloadError:
         io.fatal("Unable to get song data for song with URL %s", song_url)
+    if song is None:
+        io.fatal("Unable to get song data for song with URL %s", song_url)
 
     song_url = ""
     maxsize = 0
@@ -40,6 +42,10 @@ def get_playlist(playlist_url: str) -> Playlist:
         io.fatal(
             "Failed to download playlist data for playlist with URL: %s", playlist_url
         )
+    if playlist is None:
+        io.fatal(
+            "Failed to download playlist data for playlist with URL: %s", playlist_url
+        )
 
     songs = []
     for song in playlist["entries"]:
@@ -58,13 +64,10 @@ def get_playlist(playlist_url: str) -> Playlist:
             )
         )
 
-    is_album = len(playlist["thumbnails"]) == 3
-
     return Playlist(
         playlist["webpage_url"],
         playlist["title"],
         get_song_thumbnail_url(songs[0].url),
-        is_album,
         songs,
     )
 

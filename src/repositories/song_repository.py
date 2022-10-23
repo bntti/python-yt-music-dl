@@ -1,7 +1,7 @@
 from typing import Dict, List
 
 from database_connection import get_database_connection
-from entities import Song
+from entities import Playlist, Song
 
 
 class SongRepository:
@@ -46,40 +46,34 @@ class SongRepository:
 
         return self.row_to_song(row)
 
-    def album_count(self, song: Song) -> int:
-        """Return the number of albums that contain the song"""
-        sql = """SELECT COUNT(*) FROM playlists p, playlist_songs ps
-                 WHERE p.is_album = true AND ps.playlist_url = p.url AND ps.song_url = ?"""
-        cursor = self._connection.cursor()
-        cursor.execute(sql, [song.url])
-        row = cursor.fetchone()
-        return int(row[0])
+    def add_song(self, playlist: Playlist, song: Song) -> None:
+        """Add song to the database"""
+        if self.song_exists(song.url):
+            raise Exception("Tried to add song that already exists")
 
-    def export(self) -> List[Dict]:
-        """Export renamed song urls, artists and titles"""
         cursor = self._connection.cursor()
-        cursor.execute("SELECT url, artist, title FROM songs WHERE renamed = true")
-        rows = cursor.fetchall()
-        return [
-            {"url": row["url"], "artist": row["artist"], "title": row["title"]}
-            for row in rows
-        ]
-
-    def playlist_count(self, song: Song) -> int:
-        """Return the number of playlists that contain the song"""
-        sql = """SELECT COUNT(*) FROM playlists p, playlist_songs ps
-                 WHERE p.is_album = false AND ps.playlist_url = p.url AND ps.song_url = ?"""
-        cursor = self._connection.cursor()
-        cursor.execute(sql, [song.url])
-        row = cursor.fetchone()
-        return int(row[0])
+        sql = """INSERT INTO songs (url, uploader, yt_title, length, playlist_url)
+                VALUES (?, ?, ?, ?, ?)"""
+        cursor.execute(
+            sql,
+            [song.url, song.uploader, song.yt_title, song.length, playlist.url],
+        )
+        self._connection.commit()
 
     def song_has_playlist(self, song: Song) -> bool:
-        """Check if some playlist contains the specified song"""
-        sql = "SELECT 1 FROM playlist_songs WHERE song_url = ?"
+        """Return true if the song is in some plalylist"""
+        sql = "SELECT 1 FROM songs WHERE url = ? AND playlist_url IS NOT NULL"
         cursor = self._connection.cursor()
         cursor.execute(sql, [song.url])
         return bool(cursor.fetchone())
+
+    def get_playlist_songs(self, playlist_url: str) -> List[Song]:
+        """Fetches the list of songs that are in the specified playlist"""
+        sql = "SELECT * FROM songs WHERE playlist_url = ?"
+        cursor = self._connection.cursor()
+        cursor.execute(sql, [playlist_url])
+        rows = cursor.fetchall()
+        return [self.row_to_song(row) for row in rows]
 
     def filename_exists(self, filename: str, song: Song) -> bool:
         """Check if some other song uses the filename"""
@@ -94,18 +88,6 @@ class SongRepository:
         cursor = self._connection.cursor()
         cursor.execute(sql, [song_url])
         return bool(cursor.fetchone())
-
-    def add_song(self, song: Song) -> None:
-        """Add song to the database"""
-        if not self.song_exists(song.url):
-            cursor = self._connection.cursor()
-            sql = """INSERT INTO songs (url, uploader, yt_title, length)
-                    VALUES (?, ?, ?, ?)"""
-            cursor.execute(
-                sql,
-                [song.url, song.uploader, song.yt_title, song.length],
-            )
-            self._connection.commit()
 
     def set_song_as_downloaded(self, song: Song, filename: str) -> None:
         """Set song as downloaded and save the song filename to the database"""
@@ -128,6 +110,45 @@ class SongRepository:
         sql = "UPDATE songs SET renamed = true, artist = ?, title = ?, filename = ? WHERE url = ?"
         cursor = self._connection.cursor()
         cursor.execute(sql, [artist, title, new_filename, song.url])
+        self._connection.commit()
+
+    def export(self) -> List[Dict]:
+        """Export renamed song urls, artists and titles"""
+        cursor = self._connection.cursor()
+        cursor.execute("SELECT url, artist, title FROM songs WHERE renamed = true")
+        rows = cursor.fetchall()
+        return [
+            {"url": row["url"], "artist": row["artist"], "title": row["title"]}
+            for row in rows
+        ]
+
+    def update_song_playlist(self, playlist: Playlist, song: Song) -> None:
+        """Update song playlist"""
+        if self.song_has_playlist(song):
+            raise Exception(
+                "Song {song} was being added to new playlist even though it was already in one"
+            )
+
+        sql = "UPDATE songs SET set playlist_url = ? WHERE url = ?"
+        cursor = self._connection.cursor()
+        cursor.execute(sql, [playlist.url, song.url])
+        self._connection.commit()
+
+    def get_song_playlist_url(self, song: Song) -> str:
+        """Get song playlist url"""
+        sql = "SELECT playlist_url FROM songs WHERE url = ?"
+        cursor = self._connection.cursor()
+        cursor.execute(sql, [song.url])
+        playlist_url = cursor.fetchone()
+        if not playlist_url:
+            raise Exception("Tried to get song playlist url but the url is Null")
+        return cursor.fetchone()
+
+    def remove_song_from_playlist(self, song: Song) -> None:
+        """Removes a playlist from the playlist"""
+        sql = "UPDATE songs SET playlist_url = NULL WHERE url = ?"
+        cursor = self._connection.cursor()
+        cursor.execute(sql, [song.url])
         self._connection.commit()
 
     def remove_song(self, song: Song) -> None:
