@@ -3,7 +3,7 @@ from repositories import file_repository, playlist_repository, song_repository
 from services import song_service
 
 
-def download_songs() -> bool:
+def download_songs() -> None:
     """Download songs that have not been downloaded yet and write some metadata to them"""
     songs = song_repository.get_songs()
     io.title("Downloading songs")
@@ -28,5 +28,3 @@ def download_songs() -> bool:
     io.subtitle("Updating cover images")
     for playlist in playlist_repository.get_playlists():
         file_repository.write_cover_images(playlist)
-
-    return True

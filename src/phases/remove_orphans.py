@@ -2,7 +2,7 @@ import custom_io as io
 from repositories import file_repository, song_repository
 
 
-def remove_orphans() -> bool:
+def remove_orphans() -> None:
     """Remove songs that are not in any playlist"""
     songs = song_repository.get_songs()
     io.title("Removing orphans")
@@ -12,5 +12,3 @@ def remove_orphans() -> bool:
             song_repository.remove_song(song)
             if song.downloaded:
                 file_repository.delete_song_file(song)
-
-    return True

@@ -94,12 +94,12 @@ def check_songs(remote_playlists: List[Playlist]) -> None:
     check_new_songs_or_playlists(remote_playlists)
 
 
-def check_playlists() -> bool:
+def check_playlists() -> None:
     """Check playlists for changes"""
     urls = CONFIG["playlist_urls"]
     if len(urls) == 0:
         io.warn("No playlists to download, exiting")
-        return False
+        return
 
     io.title("Checking the playlists")
     io.subtitle("Downloading the playlist data from YouTube")
@@ -111,4 +111,3 @@ def check_playlists() -> bool:
     io.subtitle("Checking the playlists")
     check_for_removed_playlists(local_playlists, remote_playlists)
     check_songs(remote_playlists)
-    return True

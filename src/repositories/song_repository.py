@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from database_connection import get_database_connection
 from entities import Playlist, Song
@@ -45,6 +45,24 @@ class SongRepository:
             raise Exception(f"No song in the database with url {song_url}")
 
         return self.row_to_song(row)
+
+    def get_nums(self) -> Tuple[int, int, int]:
+        """Return the number of (undownloaded, unrenamed, orhphaned) songs"""
+        cursor = self._connection.cursor()
+
+        sql = "SELECT COUNT(*) FROM songs WHERE downloaded = false"
+        cursor.execute(sql)
+        undownloaded = int(cursor.fetchone()[0])
+
+        sql = "SELECT COUNT(*) FROM songs WHERE renamed = false"
+        cursor.execute(sql)
+        unrenamed = int(cursor.fetchone()[0])
+
+        sql = "SELECT COUNT(*) FROM songs WHERE playlist_url IS NULL"
+        cursor.execute(sql)
+        orphaned = int(cursor.fetchone()[0])
+
+        return (undownloaded, unrenamed, orphaned)
 
     def add_song(self, playlist: Playlist, song: Song) -> None:
         """Add song to the database"""
