@@ -3,7 +3,7 @@ import os
 
 import custom_io as io
 from repositories import song_repository
-from services import song_renamer_service
+from services import song_service
 
 
 def import_data() -> None:
@@ -23,4 +23,4 @@ def import_data() -> None:
         if not song_repository.song_exists(song_data["url"]):
             continue
         song = song_repository.get_song(song_data["url"])
-        song_renamer_service.rename_song(song, song_data["artist"], song_data["title"])
+        song_service.rename_song(song, song_data["artist"], song_data["title"])

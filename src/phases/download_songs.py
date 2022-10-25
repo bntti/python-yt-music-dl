@@ -12,14 +12,14 @@ def download_songs() -> None:
         playlist = playlist_repository.get_song_playlist(song)
 
         if not song.downloaded:
-            not_downloaded.append((song, playlist))
+            not_downloaded.append((playlist, song))
 
     if len(not_downloaded) == 0:
         io.info("All songs have been downloaded")
 
-    for i, (song, playlist) in enumerate(not_downloaded):
+    for i, (playlist, song) in enumerate(not_downloaded):
         io.subtitle(f"Downloading song {i+1}/{len(not_downloaded)}")
-        filename = song_service.download_song(song)
+        filename = song_service.download_song(playlist, song)
         song.filename = filename
 
         io.info("Writing song metadata")

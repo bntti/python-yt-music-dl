@@ -2,24 +2,60 @@ import copy
 import os
 import shutil
 from io import BytesIO
+from typing import Callable
 
 import pydub
 import requests
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import APIC
 from mutagen.mp3 import MP3
+from pathvalidate import sanitize_filepath
 from PIL import Image, ImageFilter
 
 from config import CONFIG, SONG_DIR, SONG_EXT
 from entities import Playlist, Song
-from repositories import song_repository
+from repositories import playlist_repository, song_repository
+
+
+def get_filename(original_filename: str, filename_exists: Callable[[str], bool]) -> str:
+    """Sanitize filename and get next available filename"""
+    new_filename = str(sanitize_filepath(original_filename))
+    new_filename = new_filename.replace("/", "")
+
+    num = 2
+    original_new_filename = new_filename
+    while new_filename != original_filename and filename_exists(new_filename):
+        while filename_exists(new_filename):
+            new_filename = f"{original_new_filename}_{num}"
+
+    return new_filename
+
+
+def get_song_filename(song: Song, artist: str, title: str) -> str:
+    """Get sanitized filename for song"""
+    return get_filename(
+        f"{artist} - {title}",
+        lambda filename: not song_repository.filename_exists(filename, song),
+    )
+
+
+def create_playlist_folder(title: str) -> str:
+    """Create playlist folder and return the filename of the created folder"""
+    filename = get_filename(
+        title,
+        lambda filename: not playlist_repository.filename_exists(filename),
+    )
+    path = os.path.join(SONG_DIR, filename)
+    if not os.path.exists(path):
+        os.mkdir(path)
+    return filename
 
 
 def get_song_path(song: Song) -> str:
     """Get path of song file"""
-    if song.filename is None:
-        raise Exception(f"Tried to get path to song {song} with no filname")
-    return os.path.join(SONG_DIR, song.filename + SONG_EXT)
+    if song.folder is None or song.filename is None:
+        raise Exception(f"Tried to get path to song {song} with no folder/filname")
+    return os.path.join(SONG_DIR, song.folder, song.filename + SONG_EXT)
 
 
 def rename_song(song: Song, new_filename: str) -> None:
@@ -119,20 +155,27 @@ def update_song_metadata(
     mp3_file.save()
 
 
-@staticmethod
-def normalize_and_convert_song_to_the_correct_format(path: str) -> str:
+def normalize_and_convert_song_to_the_correct_format(song_path: str) -> str:
     """Normalize song, convert song file to configured format and return the filename"""
-    base, ext = os.path.splitext(path)
-    filename = os.path.basename(base)
-    new_path = os.path.join(SONG_DIR, filename + SONG_EXT)
+    base_path, filename = os.path.split(song_path)
+    filename, ext = os.path.splitext(filename)
+    new_path = os.path.join(base_path, filename + SONG_EXT)
 
-    song_audio = pydub.AudioSegment.from_file(path, format=ext[1:])
+    song_audio = pydub.AudioSegment.from_file(song_path, format=ext[1:])
     loudness_difference = CONFIG["DBFS"] - song_audio.dBFS
     normalized = song_audio.apply_gain(loudness_difference)
     normalized.export(new_path, format=SONG_EXT[1:])
-    os.remove(path)
+    os.remove(song_path)
 
     return filename
+
+
+def remove_extra_song_folders() -> None:
+    """Remove empty directories from SONG_DIR"""
+    folders = os.listdir(SONG_DIR)
+    for folder in folders:
+        if not playlist_repository.filename_exists(folder):
+            os.rmdir(os.path.join(SONG_DIR, folder))
 
 
 def delete_song_file(song: Song) -> None:

@@ -8,19 +8,16 @@ from phases import (
     import_data,
     remove_orphans,
     rename_songs,
-    update_cover_images,
 )
 from repositories import song_repository
 
 MENU_STR = f"""{LINE}------------------------------{CLEAR}
-{OPTION}Number of songs to download{CLEAR} | %s
-{OPTION}Number of songs to rename{CLEAR}   | %s
-{OPTION}Number of orhphaned songs{CLEAR}   | %s
+{OPTION}Downloaded songs{CLEAR}  | %s
+{OPTION}Songs to rename  {CLEAR} | %s
 
 {TITLE}What do you want to do?{CLEAR}
-    {OPTION}r{CLEAR} | refresh playlists
-    {OPTION}d{CLEAR} | download songs
-    {OPTION}n{CLEAR} | rename songs
+    {OPTION}u{CLEAR} | update playlists
+    {OPTION}r{CLEAR} | rename songs
     {OPTION}u{CLEAR} | update cover images
     {OPTION}e{CLEAR} | export renaming data
     {OPTION}i{CLEAR} | import renaming data
@@ -39,15 +36,12 @@ def main() -> None:
         except EOFError:
             command = "q"
 
-        if command == "r":
+        if command == "u":
             check_playlists()
-        elif command == "d":
             download_songs()
             remove_orphans()
-        elif command == "n":
+        elif command == "r":
             rename_songs()
-        elif command == "u":
-            update_cover_images()
         elif command == "e":
             export_data()
         elif command == "i":

@@ -12,7 +12,8 @@ def create_tables(connection: Connection) -> None:
         CREATE TABLE playlists (
             url       TEXT NOT NULL PRIMARY KEY,
             title     TEXT NOT NULL,
-            image_url TEXT NOT NULL
+            image_url TEXT NOT NULL,
+            filename  TEXT NOT NULL
         );
         """
     )
@@ -25,6 +26,7 @@ def create_tables(connection: Connection) -> None:
             length       INT  NOT NULL,
             playlist_url TEXT,
             downloaded   BOOL NOT NULL DEFAULT false,
+            folder       TEXT,
             filename     TEXT,
             image_url    TEXT,
             renamed      bool NOT NULL DEFAULT false,

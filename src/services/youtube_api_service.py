@@ -4,6 +4,7 @@ from yt_dlp.utils import DownloadError
 import custom_io as io
 from config import SONG_DIR
 from entities import Playlist, Song
+from repositories import file_repository
 
 
 def get_song_thumbnail_url(song_url: str) -> str:
@@ -64,20 +65,23 @@ def get_playlist(playlist_url: str) -> Playlist:
             )
         )
 
+    filename = file_repository.create_playlist_folder(playlist["title"])
+
     return Playlist(
         playlist["webpage_url"],
         playlist["title"],
         get_song_thumbnail_url(songs[0].url),
+        filename,
         songs,
     )
 
 
-def download_song(song: Song) -> str:
+def download_song(playlist: Playlist, song: Song) -> str:
     """Downloads the song file and returns the file path"""
     ydl_opts = {
         "format": "bestaudio",
         "outtmpl": {"default": "%(title)s.%(ext)s"},
-        "paths": {"home": SONG_DIR},
+        "paths": {"home": f"{SONG_DIR}/{playlist.filename}"},
         "quiet": True,
     }
     for _ in range(3):

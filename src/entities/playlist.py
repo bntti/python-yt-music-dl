@@ -10,21 +10,26 @@ class Playlist:
         url (str): Playlist Youtube url
         title (str): Playlist title
         image_url (str): URL of the cover image used for the songs in this playlist
+        filename (str): Filename of the folder of the playlist
         songs (List[Song]): Songs that the playlist contains
     """
 
-    def __init__(self, url: str, title: str, image_url: str, songs: List[Song]) -> None:
+    def __init__(  # pylint: disable=[R0913]
+        self, url: str, title: str, image_url: str, filename: str, songs: List[Song]
+    ) -> None:
         """Playlist object constructor
 
         Args:
             url (str): Playlist Youtube url
             title (str): Playlist title
             image_url (str): URL of the cover image used for the songs in this playlist
+            filename (str): Filename of the folder of the playlist
             songs (List[Song]): Songs that the playlist contains
         """
         self.url = url
         self.title = title
         self.image_url = image_url
+        self.filename = filename
         self.songs = songs
 
         self.song_index = 0

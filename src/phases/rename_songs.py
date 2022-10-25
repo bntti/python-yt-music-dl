@@ -3,7 +3,7 @@ from typing import List
 import custom_io as io
 from entities import Song
 from repositories import song_repository
-from services import song_renamer_service
+from services import song_service
 
 
 def _rename_songs(not_renamed: List[Song]) -> None:
@@ -21,7 +21,7 @@ def _rename_songs(not_renamed: List[Song]) -> None:
         artist = input_artist if input_artist else artist
         title = input_title if input_title else title
 
-        song_renamer_service.rename_song(song, artist, title)
+        song_service.rename_song(song, artist, title)
 
 
 def rename_songs() -> None:
@@ -29,7 +29,7 @@ def rename_songs() -> None:
     songs = song_repository.get_songs()
     io.title("Renaming songs")
 
-    not_renamed = [song for song in songs if not song.renamed]
+    not_renamed = [song for song in songs if not song.renamed and song.downloaded]
     if len(not_renamed) == 0:
         io.info("All songs have been renamed")
     else:

@@ -19,6 +19,7 @@ class SongRepository:
             row["yt_title"],
             row["length"],
             row["downloaded"],
+            row["folder"],
             row["filename"],
             row["image_url"],
             row["renamed"],
@@ -28,7 +29,15 @@ class SongRepository:
 
     def get_songs(self) -> List[Song]:
         """Fetches a list of all the songs in the database"""
-        sql = "SELECT * FROM songs ORDER BY downloaded DESC, LOWER(filename), LOWER(yt_title)"
+        sql = "SELECT * FROM songs WHERE playlist_url IS NOT NULL"
+        cursor = self._connection.cursor()
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+        return [self.row_to_song(row) for row in rows]
+
+    def get_orphans(self) -> List[Song]:
+        """Fetches a list of all the songs in the database"""
+        sql = "SELECT * FROM songs WHERE playlist_url IS NULL"
         cursor = self._connection.cursor()
         cursor.execute(sql)
         rows = cursor.fetchall()
@@ -46,23 +55,19 @@ class SongRepository:
 
         return self.row_to_song(row)
 
-    def get_nums(self) -> Tuple[int, int, int]:
+    def get_nums(self) -> Tuple[int, int]:
         """Return the number of (undownloaded, unrenamed, orhphaned) songs"""
         cursor = self._connection.cursor()
 
-        sql = "SELECT COUNT(*) FROM songs WHERE downloaded = false"
+        sql = "SELECT COUNT(*) FROM songs WHERE downloaded = true"
         cursor.execute(sql)
-        undownloaded = int(cursor.fetchone()[0])
+        downloaded = int(cursor.fetchone()[0])
 
-        sql = "SELECT COUNT(*) FROM songs WHERE renamed = false"
+        sql = "SELECT COUNT(*) FROM songs WHERE downloaded = true and renamed = false"
         cursor.execute(sql)
-        unrenamed = int(cursor.fetchone()[0])
+        renamed = int(cursor.fetchone()[0])
 
-        sql = "SELECT COUNT(*) FROM songs WHERE playlist_url IS NULL"
-        cursor.execute(sql)
-        orphaned = int(cursor.fetchone()[0])
-
-        return (undownloaded, unrenamed, orphaned)
+        return (downloaded, renamed)
 
     def add_song(self, playlist: Playlist, song: Song) -> None:
         """Add song to the database"""
@@ -70,11 +75,18 @@ class SongRepository:
             raise Exception("Tried to add song that already exists")
 
         cursor = self._connection.cursor()
-        sql = """INSERT INTO songs (url, uploader, yt_title, length, playlist_url)
-                VALUES (?, ?, ?, ?, ?)"""
+        sql = """INSERT INTO songs (url, uploader, yt_title, length, playlist_url, folder)
+                VALUES (?, ?, ?, ?, ?, ?)"""
         cursor.execute(
             sql,
-            [song.url, song.uploader, song.yt_title, song.length, playlist.url],
+            [
+                song.url,
+                song.uploader,
+                song.yt_title,
+                song.length,
+                playlist.url,
+                playlist.filename,
+            ],
         )
         self._connection.commit()
 
@@ -101,7 +113,7 @@ class SongRepository:
         return bool(cursor.fetchone())
 
     def song_exists(self, song_url: str) -> bool:
-        """Check if song is in the database"""
+        """Check if the song is in the database"""
         sql = "SELECT 1 FROM songs WHERE url = ?"
         cursor = self._connection.cursor()
         cursor.execute(sql, [song_url])
@@ -140,16 +152,16 @@ class SongRepository:
             for row in rows
         ]
 
-    def update_song_playlist(self, playlist: Playlist, song: Song) -> None:
+    def update_song_playlist(self, song: Song, new_playlist: Playlist) -> None:
         """Update song playlist"""
         if self.song_has_playlist(song):
             raise Exception(
                 "Song {song} was being added to new playlist even though it was already in one"
             )
 
-        sql = "UPDATE songs SET set playlist_url = ? WHERE url = ?"
+        sql = "UPDATE songs SET playlist_url = ?, folder = ? WHERE url = ?"
         cursor = self._connection.cursor()
-        cursor.execute(sql, [playlist.url, song.url])
+        cursor.execute(sql, [new_playlist.url, new_playlist.filename, song.url])
         self._connection.commit()
 
     def get_song_playlist_url(self, song: Song) -> str:

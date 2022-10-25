@@ -9,6 +9,7 @@ class Song:  # pylint: disable=[R0902,R0903]
         yt_title (str): Song title on Youtube
         length (int): Song length in seconds
         downloaded (bool): True if the song file is downloaded.
+        folder (str): The filename of the folder the song is in.
         filename (str): Song file filename.
         image_url (str): Url to the cover image of the song
         renamed (bool): True if the song has been renamed (artist and title have been set).
@@ -23,6 +24,7 @@ class Song:  # pylint: disable=[R0902,R0903]
         yt_title: str,
         length: int,
         downloaded: bool = False,
+        folder: Optional[str] = None,
         filename: Optional[str] = None,
         image_url: Optional[str] = None,
         renamed: bool = False,
@@ -37,6 +39,7 @@ class Song:  # pylint: disable=[R0902,R0903]
             yt_title (str): Song title on Youtube
             length (int): Song length in seconds
             downloaded (bool, optional): True if the song file is downloaded. Defaults to False.
+            folder (Optional[str], optional): The filename of the folder the song is in.
             filename (Optional[str], optional): Song file filename. Defaults to None.
             image_url (Optional[str], optional): Url to the cover image of the song
             renamed (bool, optional): True if the song has been
@@ -49,6 +52,7 @@ class Song:  # pylint: disable=[R0902,R0903]
         self.yt_title = yt_title
         self.length = length
         self.downloaded = downloaded
+        self.folder = folder
         self.filename = filename
         self.image_url = image_url
         self.renamed = renamed
