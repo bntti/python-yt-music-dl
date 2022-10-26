@@ -105,11 +105,11 @@ class SongRepository:
         rows = cursor.fetchall()
         return [self.row_to_song(row) for row in rows]
 
-    def filename_exists(self, filename: str, song: Song) -> bool:
+    def filename_exists(self, filename: str) -> bool:
         """Check if some other song uses the filename"""
-        sql = "SELECT 1 FROM songs WHERE filename = ? and url != ?"
+        sql = "SELECT 1 FROM songs WHERE filename = ?"
         cursor = self._connection.cursor()
-        cursor.execute(sql, [filename, song.url])
+        cursor.execute(sql, [filename])
         return bool(cursor.fetchone())
 
     def song_exists(self, song_url: str) -> bool:

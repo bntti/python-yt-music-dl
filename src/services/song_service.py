@@ -39,7 +39,7 @@ def assert_song_has_no_playlist(original_playlist: Playlist, song: Song):
 
 def rename_song(song: Song, artist: str, title: str) -> None:
     """Rename song to format artist - title and add the new data to the database"""
-    new_filename = file_repository.get_song_filename(song, artist, title)
+    new_filename = file_repository.get_song_filename(artist, title)
     song_repository.set_song_as_renamed(song, artist, title, new_filename)
     file_repository.rename_song(song, new_filename)
     file_repository.update_song_metadata(song, artist, title, new_filename)
@@ -50,7 +50,7 @@ def update_song_playlist(new_playlist: Playlist, song: Song) -> None:
     song = song_repository.get_song(song.url)
     if song.downloaded:
         # Maybe print that the song has been moved?
-        assert song.filename
+        assert song.folder and song.filename
         original_path = os.path.join(SONG_DIR, song.folder, song.filename + SONG_EXT)
         target_path = os.path.join(
             SONG_DIR, new_playlist.filename, song.filename + SONG_EXT

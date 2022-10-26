@@ -22,20 +22,20 @@ def get_filename(original_filename: str, filename_exists: Callable[[str], bool])
     new_filename = str(sanitize_filepath(original_filename))
     new_filename = new_filename.replace("/", "")
 
-    num = 2
+    num = 1
     original_new_filename = new_filename
     while new_filename != original_filename and filename_exists(new_filename):
-        while filename_exists(new_filename):
-            new_filename = f"{original_new_filename}_{num}"
+        num += 1
+        new_filename = f"{original_new_filename}_{num}"
 
     return new_filename
 
 
-def get_song_filename(song: Song, artist: str, title: str) -> str:
+def get_song_filename(artist: str, title: str) -> str:
     """Get sanitized filename for song"""
     return get_filename(
         f"{artist} - {title}",
-        lambda filename: not song_repository.filename_exists(filename, song),
+        song_repository.filename_exists,
     )
 
 
@@ -43,7 +43,7 @@ def create_playlist_folder(title: str) -> str:
     """Create playlist folder and return the filename of the created folder"""
     filename = get_filename(
         title,
-        lambda filename: not playlist_repository.filename_exists(filename),
+        playlist_repository.filename_exists,
     )
     path = os.path.join(SONG_DIR, filename)
     if not os.path.exists(path):
