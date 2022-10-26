@@ -170,12 +170,20 @@ def normalize_and_convert_song_to_the_correct_format(song_path: str) -> str:
     return filename
 
 
+def delete_folder(path: str) -> None:
+    """Delete all files in the folder and then the folder itself"""
+    files = os.listdir(path)
+    for file in files:
+        os.remove(os.path.join(path, file))
+    os.rmdir(path)
+
+
 def remove_extra_song_folders() -> None:
     """Remove empty directories from SONG_DIR"""
     folders = os.listdir(SONG_DIR)
     for folder in folders:
         if not playlist_repository.filename_exists(folder):
-            os.rmdir(os.path.join(SONG_DIR, folder))
+            delete_folder(os.path.join(SONG_DIR, folder))
 
 
 def delete_song_file(song: Song) -> None:
