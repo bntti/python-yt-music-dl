@@ -7,7 +7,7 @@ from typing import Callable
 import pydub
 import requests
 from mutagen.easyid3 import EasyID3
-from mutagen.id3 import APIC
+from mutagen.id3._frames import APIC
 from mutagen.mp3 import MP3
 from pathvalidate import sanitize_filepath
 from PIL import Image, ImageFilter
@@ -116,7 +116,7 @@ def write_cover_images(playlist: Playlist) -> None:
         mp3_file = MP3(get_song_path(song), ID3=EasyID3)
 
         mp3_file = MP3(get_song_path(song))
-        mp3_file.tags.add(
+        mp3_file.tags.add(  # pyright: reportOptionalMemberAccess=false
             APIC(
                 encoding=3,
                 mime="image/png",
