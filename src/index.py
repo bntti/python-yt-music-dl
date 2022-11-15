@@ -18,7 +18,6 @@ MENU_STR = f"""{LINE}------------------------------{CLEAR}
 {TITLE}What do you want to do?{CLEAR}
     {OPTION}u{CLEAR} | update playlists
     {OPTION}r{CLEAR} | rename songs
-    {OPTION}u{CLEAR} | update cover images
     {OPTION}e{CLEAR} | export renaming data
     {OPTION}i{CLEAR} | import renaming data
     {OPTION}q{CLEAR} | quit

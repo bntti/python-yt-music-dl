@@ -74,7 +74,7 @@ def generate_square_image(image: Image.Image) -> Image.Image:
     new_w = int(original_w * factor)
     new_h = int(original_h * factor)
     background = image.resize((new_w, new_h))
-    background = background.filter(ImageFilter.GaussianBlur(7))
+    background = background.filter(ImageFilter.GaussianBlur(11))
 
     target_bg_size = min(new_w, new_h)
     x_offset = int((new_w - target_bg_size) / 2)
