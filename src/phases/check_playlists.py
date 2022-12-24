@@ -53,6 +53,8 @@ def check_new_songs_or_playlists(remote_playlists: List[Playlist]) -> None:
 
         # Playlist is OK
         local_playlist = playlist_repository.get_playlist(remote_playlist.url)
+        if local_playlist.image_url != remote_playlist.image_url:
+            playlist_repository.set_image_url(local_playlist, remote_playlist.image_url)
         if local_playlist == remote_playlist:
             continue
 

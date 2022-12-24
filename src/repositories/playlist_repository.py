@@ -73,6 +73,12 @@ class PlaylistRepository:
         cursor.execute(sql, [filename])
         return bool(cursor.fetchone())
 
+    def set_image_url(self, playlist: Playlist, image_url: str) -> None:
+        sql = "UPDATE playlists SET image_url = ? WHERE url = ?"
+        cursor = self._connection.cursor()
+        cursor.execute(sql, [image_url, playlist.url])
+        self._connection.commit()
+
     def add_playlist(self, playlist: Playlist) -> None:
         """Add a playlist to the database but not it's songs"""
         sql = "INSERT INTO playlists (url, title, image_url, filename) VALUES (?, ?, ?, ?)"
