@@ -50,7 +50,7 @@ def get_playlist(playlist_url: str) -> Playlist:
 
     songs = []
     for song in playlist["entries"]:
-        if song["uploader"] is None:
+        if song["channel"] is None:
             io.fatal(
                 "There is an invalid song in playlist %s, "
                 + "you should remove it from the playlist to continue",
@@ -59,7 +59,7 @@ def get_playlist(playlist_url: str) -> Playlist:
         songs.append(
             Song(
                 song["url"],
-                song["uploader"],
+                song["channel"],
                 song["title"],
                 song["duration"],
             )

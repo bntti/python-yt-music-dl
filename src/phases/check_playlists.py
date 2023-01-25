@@ -79,7 +79,8 @@ def check_playlists() -> None:
     io.title("Checking the playlists")
     io.subtitle("Downloading the playlist data from YouTube")
     remote_playlists = []
-    for url in urls:
+    for i, url in enumerate(urls):
+        io.info(f"Downloading playlist data ({i+1}/{len(urls)})")
         remote_playlists.append(youtube_api_service.get_playlist(url))
     local_playlists = playlist_repository.get_playlists()
 

@@ -74,6 +74,7 @@ class PlaylistRepository:
         return bool(cursor.fetchone())
 
     def set_image_url(self, playlist: Playlist, image_url: str) -> None:
+        """Set image url for playlist"""
         sql = "UPDATE playlists SET image_url = ? WHERE url = ?"
         cursor = self._connection.cursor()
         cursor.execute(sql, [image_url, playlist.url])
