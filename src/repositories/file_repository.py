@@ -54,7 +54,7 @@ def create_playlist_folder(title: str) -> str:
 def get_song_path(song: Song) -> str:
     """Get path of song file"""
     if song.folder is None or song.filename is None:
-        raise Exception(f"Tried to get path to song {song} with no folder/filname")
+        raise Exception(f"Tried to get path to song {song} with no folder/filename")
     return os.path.join(SONG_DIR, song.folder, song.filename + SONG_EXT)
 
 
@@ -112,8 +112,6 @@ def write_cover_images(playlist: Playlist) -> None:
     for song in playlist:
         if song.image_url == playlist.image_url:
             continue
-
-        mp3_file = MP3(get_song_path(song), ID3=EasyID3)
 
         mp3_file = MP3(get_song_path(song))
         mp3_file.tags.add(  # pyright: reportOptionalMemberAccess=false

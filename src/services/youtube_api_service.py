@@ -8,7 +8,7 @@ from repositories import file_repository
 
 
 def get_song_thumbnail_url(song_url: str) -> str:
-    """Get highest resolution thumbnail image for song"""
+    """Get the highest resolution thumbnail image for song"""
     try:
         ydl_opts = {"skip_download": True, "quiet": True}
         with YoutubeDL(ydl_opts) as ydl:

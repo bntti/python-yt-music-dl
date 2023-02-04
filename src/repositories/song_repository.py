@@ -56,7 +56,7 @@ class SongRepository:
         return self.row_to_song(row)
 
     def get_nums(self) -> Tuple[int, int]:
-        """Return the number of (undownloaded, unrenamed, orhphaned) songs"""
+        """Return the number of (undownloaded, unrenamed, orphaned) songs"""
         cursor = self._connection.cursor()
 
         sql = "SELECT COUNT(*) FROM songs WHERE downloaded = true"
@@ -91,7 +91,7 @@ class SongRepository:
         self._connection.commit()
 
     def song_has_playlist(self, song: Song) -> bool:
-        """Return true if the song is in some plalylist"""
+        """Return true if the song is in some playlist"""
         sql = "SELECT 1 FROM songs WHERE url = ? AND playlist_url IS NOT NULL"
         cursor = self._connection.cursor()
         cursor.execute(sql, [song.url])
