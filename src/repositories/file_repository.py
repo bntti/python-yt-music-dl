@@ -1,8 +1,8 @@
 import copy
 import os
 import shutil
+import sys
 from io import BytesIO
-from typing import Callable
 
 import pydub
 import requests
@@ -17,38 +17,28 @@ from entities import Playlist, Song
 from repositories import playlist_repository, song_repository
 
 
-def get_filename(original_filename: str, filename_exists: Callable[[str], bool]) -> str:
-    """Sanitize filename and get next available filename"""
-    new_filename = str(sanitize_filepath(original_filename))
-    new_filename = new_filename.replace("/", "")
+def sanitize_filename(original_filename: str) -> str:
+    """Sanitize filename"""
+    sanitized_filename = str(sanitize_filepath(original_filename))
+    sanitized_filename = sanitized_filename.replace("/", " ")
 
-    num = 1
-    original_new_filename = new_filename
-    while new_filename != original_filename and filename_exists(new_filename):
-        num += 1
-        new_filename = f"{original_new_filename}_{num}"
-
-    return new_filename
+    return sanitized_filename
 
 
-def get_song_filename(artist: str, title: str) -> str:
+def get_song_filename(artist: str, title: str, assert_unique: bool = False) -> str:
     """Get sanitized filename for song"""
-    return get_filename(
-        f"{artist} - {title}",
-        song_repository.filename_exists,
-    )
+    filename = sanitize_filename(f"{artist} - {title}")
+    if assert_unique and song_repository.filename_exists(filename):
+        sys.exit(f"Filename exists '{filename}'")
+
+    return filename
 
 
-def create_playlist_folder(title: str) -> str:
-    """Create playlist folder and return the filename of the created folder"""
-    filename = get_filename(
-        title,
-        playlist_repository.filename_exists,
-    )
+def create_playlist_folder(filename: str) -> None:
+    """Create folder (for playlist) if necessary"""
     path = os.path.join(SONG_DIR, filename)
     if not os.path.exists(path):
         os.mkdir(path)
-    return filename
 
 
 def get_song_path(song: Song) -> str:

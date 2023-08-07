@@ -4,6 +4,7 @@ import os
 import custom_io as io
 from repositories import song_repository
 from services import song_service
+from repositories import file_repository
 
 
 def import_data() -> None:
@@ -22,5 +23,15 @@ def import_data() -> None:
     for song_data in data:
         if not song_repository.song_exists(song_data["url"]):
             continue
+
         song = song_repository.get_song(song_data["url"])
-        song_service.rename_song(song, song_data["artist"], song_data["title"])
+        new_filename = file_repository.get_song_filename(
+            song_data["artist"], song_data["title"], False
+        )
+        if (
+            song.artist != song_data["artist"]
+            or song.title != song_data["title"]
+            or song.filename != new_filename
+        ):
+            print(f"Old filename: {song.filename}\nNew filename: {new_filename}\n")
+            song_service.rename_song(song, song_data["artist"], song_data["title"])

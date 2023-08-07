@@ -65,7 +65,8 @@ def get_playlist(playlist_url: str) -> Playlist:
             )
         )
 
-    filename = file_repository.create_playlist_folder(playlist["title"])
+    filename = file_repository.sanitize_filename(playlist["title"])
+    file_repository.create_playlist_folder(filename)
 
     return Playlist(
         playlist["webpage_url"],
