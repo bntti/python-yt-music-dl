@@ -2,9 +2,8 @@ import json
 import os
 
 import custom_io as io
-from repositories import song_repository
+from repositories import file_repository, song_repository
 from services import song_service
-from repositories import file_repository
 
 
 def import_data() -> None:
@@ -25,8 +24,9 @@ def import_data() -> None:
             continue
 
         song = song_repository.get_song(song_data["url"])
+        old_filename = song.filename
         new_filename = file_repository.get_song_filename(
-            song_data["artist"], song_data["title"], False
+            old_filename, song_data["artist"], song_data["title"], False
         )
         if (
             song.artist != song_data["artist"]

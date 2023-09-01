@@ -39,7 +39,10 @@ def assert_song_has_no_playlist(original_playlist: Playlist, song: Song):
 
 def rename_song(song: Song, artist: str, title: str) -> None:
     """Rename song to format artist - title and add the new data to the database"""
-    new_filename = file_repository.get_song_filename(artist, title, assert_unique=True)
+    old_filename = song.filename
+    new_filename = file_repository.get_song_filename(
+        old_filename, artist, title, assert_unique=True
+    )
     song_repository.set_song_as_renamed(song, artist, title, new_filename)
     file_repository.rename_song(song, new_filename)
     file_repository.update_song_metadata(song, artist, title, new_filename)

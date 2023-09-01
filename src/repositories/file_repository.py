@@ -25,10 +25,17 @@ def sanitize_filename(original_filename: str) -> str:
     return sanitized_filename
 
 
-def get_song_filename(artist: str, title: str, assert_unique: bool = False) -> str:
+def get_song_filename(
+    old_filename: str | None, artist: str, title: str, assert_unique: bool = False
+) -> str:
     """Get sanitized filename for song"""
     filename = sanitize_filename(f"{artist} - {title}")
-    if assert_unique and song_repository.filename_exists(filename):
+
+    if (
+        old_filename != filename
+        and assert_unique
+        and song_repository.filename_exists(filename)
+    ):
         sys.exit(f"Filename exists '{filename}'")
 
     return filename
@@ -104,7 +111,7 @@ def write_cover_images(playlist: Playlist) -> None:
             continue
 
         mp3_file = MP3(get_song_path(song))
-        mp3_file.tags.add(  # pyright: reportOptionalMemberAccess=false
+        mp3_file.tags.add(  # type: ignore
             APIC(
                 encoding=3,
                 mime="image/png",
