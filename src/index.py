@@ -3,6 +3,7 @@ from custom_io import CLEAR, LINE, OPTION, TITLE
 from initialize_database import initialize_database
 from phases import (
     check_playlists,
+    check_similar_artists,
     download_songs,
     export_data,
     import_data,
@@ -18,6 +19,7 @@ MENU_STR = f"""{LINE}------------------------------{CLEAR}
 {TITLE}What do you want to do?{CLEAR}
     {OPTION}u{CLEAR} | update playlists
     {OPTION}r{CLEAR} | rename songs
+    {OPTION}c{CLEAR} | check for duplicate artists
     {OPTION}e{CLEAR} | export renaming data
     {OPTION}i{CLEAR} | import renaming data
     {OPTION}q{CLEAR} | quit
@@ -41,6 +43,8 @@ def main() -> None:
             remove_orphans()
         elif command == "r":
             rename_songs()
+        elif command == "c":
+            check_similar_artists()
         elif command == "e":
             export_data()
         elif command == "i":

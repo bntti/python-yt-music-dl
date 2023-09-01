@@ -30,13 +30,14 @@ poetry run invoke start
 
 ### Usage
 
-| Command                     | Description                                                                                 |
-| --------------------------- | ------------------------------------------------------------------------------------------- |
-| `d \| download songs`       | Check the playlists for changes and download the new songs                                  |
-| `r \| rename songs`         | Rename songs that have not been renamed yet                                                 |
-| `e \| export renaming data` | Export the user inputted artist-title pairs to `export.json`                                |
-| `i \| import renaming data` | Import the user inputted artist-title pairs from a `export.json` file in this projects root |
-| `q \| quit`                 | Exit the program                                                                            |
+| Command                            | Description                                                                                 |
+| ---------------------------------- | ------------------------------------------------------------------------------------------- |
+| `d \| download songs`              | Check the playlists for changes and download the new songs                                  |
+| `r \| rename songs`                | Rename songs that have not been renamed yet                                                 |
+| `e \| export renaming data`        | Export the user inputted artist-title pairs to `export.json`                                |
+| `c \| check for duplicate artists` | Prints artists that are similar to each other to check for typos                            |
+| `i \| import renaming data`        | Import the user inputted artist-title pairs from a `export.json` file in this projects root |
+| `q \| quit`                        | Exit the program                                                                            |
 
 ### Configuration
 
