@@ -4,7 +4,7 @@ from yt_dlp.utils import DownloadError
 import custom_io as io
 from config import SONG_DIR
 from entities import Playlist, Song
-from repositories import file_repository
+from repositories import file_repository, song_repository
 
 
 def get_song_thumbnail_url(song_url: str) -> str:
@@ -51,11 +51,22 @@ def get_playlist(playlist_url: str) -> Playlist:
     songs = []
     for song in playlist["entries"]:
         if song["channel"] is None:
-            io.fatal(
+            io.warn(
                 "There is an invalid song in playlist %s, "
-                + "you should remove it from the playlist to continue",
+                + "you should remove it from the playlist. Skipping it for now",
                 playlist["title"],
             )
+            if song["url"] and song_repository.song_exists(song["url"]):
+                song = song_repository.get_song(song["url"])
+                io.info(
+                    "Url: %s\nYT data: %s - %s\nRenamed: %s - %s",
+                    song.url,
+                    song.uploader,
+                    song.yt_title,
+                    song.artist,
+                    song.title,
+                )
+            continue
         songs.append(
             Song(
                 song["url"],

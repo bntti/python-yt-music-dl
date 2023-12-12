@@ -12,6 +12,7 @@ from mutagen.mp3 import MP3
 from pathvalidate import sanitize_filepath
 from PIL import Image, ImageFilter
 
+import custom_io
 from config import CONFIG, SONG_DIR, SONG_EXT
 from entities import Playlist, Song
 from repositories import playlist_repository, song_repository
@@ -36,7 +37,7 @@ def get_song_filename(
         and assert_unique
         and song_repository.filename_exists(filename)
     ):
-        sys.exit(f"Filename exists '{filename}'")
+        custom_io.fatal(f"Filename exists '{filename}'")
 
     return filename
 
