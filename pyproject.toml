@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Downloads songs from youtube, renames them and writes the song metadata"
 license = "GPL-3.0-only"
 authors = ["Juho Röyskö <roysko.juho@gmail.com>"]
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.8"
