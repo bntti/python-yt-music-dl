@@ -1,6 +1,6 @@
 # yt-music-dl
 
-**Deprecated**
+**Archived**
 
 See updated version at [https://github.com/bntti/yt-music-dl](yt-music-dl), written with typescript.
 
