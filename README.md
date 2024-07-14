@@ -1,5 +1,11 @@
 # yt-music-dl
 
+**Deprecated**
+
+See updated version at [https://github.com/bntti/yt-music-dl](yt-music-dl), written with typescript.
+
+---
+
 Downloads playlists from youtube, writes the song metadata and allows the user to manually input the song artists/titles. One song can only be in one playlist.
 
 Metadata written:
